@@ -126,7 +126,7 @@ export default async function PricingPage() {
           </div>
         ))}
       </div>
-      <p className="relative mx-auto mt-16 w-fit rounded-full px-3 py-2 text-sm/6 text-stone-600 ring-1 ring-stone-900/10 hover:ring-stone-900/20 dark:text-stone-300 dark:ring-white/10 dark:hover:ring-white/20">
+      <p className="relative mx-auto mt-16 w-fit rounded-full px-3 py-2 text-sm/6 text-stone-600 ring-1 ring-stone-900/10 hover:ring-stone-900/20 dark:bg-stone-800 dark:text-stone-300 dark:ring-white/10 dark:hover:ring-white/20">
         Self-host for free with Docker.{' '}
         <a
           href="https://github.com/schelskedevco/ignidash"
