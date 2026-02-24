@@ -10,7 +10,7 @@ Follow the steps below to get your app running.
 
 #### Node.js
 
-1. Install Node.js from the [official website](https://nodejs.org/)
+1. Install Node.js 20+ from the [official website](https://nodejs.org/)
 2. Verify Node.js is installed:
 
 ```bash
