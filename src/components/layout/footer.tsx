@@ -47,7 +47,7 @@ const navigation = {
 
 export default function Footer() {
   return (
-    <footer className="bg-emphasized-background border-t border-stone-200 dark:border-stone-700">
+    <footer className="from-emphasized-background to-background border-t border-stone-200 bg-gradient-to-b dark:border-stone-700">
       <div className="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
         <nav aria-label="Footer" className="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6">
           {navigation.main.map((item) => (

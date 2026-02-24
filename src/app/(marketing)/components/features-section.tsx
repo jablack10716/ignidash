@@ -61,7 +61,7 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <div className="bg-white py-24 sm:py-32 dark:bg-stone-800" id="features">
+    <div className="bg-white py-24 sm:py-32 dark:bg-stone-900" id="features">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-base/7 font-semibold text-rose-600 dark:text-rose-400">{sectionHeader.eyebrow}</h2>
