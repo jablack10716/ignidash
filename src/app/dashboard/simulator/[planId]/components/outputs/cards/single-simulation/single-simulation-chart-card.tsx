@@ -110,7 +110,6 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
   const setDataView = (view: typeof dataView) => updateDataView('taxes', { dataView: view });
 
   const [referenceLineMode, setReferenceLineMode] = useState<TaxableIncomeReferenceLineMode>(TAXABLE_INCOME_REFERENCE_LINE_MODES[0]);
-
   const [agiReferenceLineMode, setAgiReferenceLineMode] = useState<AgiReferenceLineMode>(AGI_REFERENCE_LINE_MODES[0]);
 
   return (
