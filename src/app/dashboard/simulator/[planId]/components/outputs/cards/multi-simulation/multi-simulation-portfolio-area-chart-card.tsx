@@ -1,10 +1,9 @@
-import Card from '@/components/ui/card';
 import type { MultiSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
-import { Subheading } from '@/components/catalyst/heading';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
 import MultiSimulationPortfolioAreaChart from '../../charts/multi-simulation/multi-simulation-portfolio-area-chart';
 import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
+import ChartCard from '../chart-card';
 
 interface MultiSimulationPortfolioAreaChartCardProps {
   rawChartData: MultiSimulationPortfolioChartDataPoint[];
@@ -22,14 +21,7 @@ export default function MultiSimulationPortfolioAreaChartCard({
   startAge,
 }: MultiSimulationPortfolioAreaChartCardProps) {
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3}>
-          <span className="mr-2">Portfolio</span>
-          <span className="text-muted-foreground hidden sm:inline">Time Series</span>
-        </Subheading>
-        <ChartTimeFrameDropdown timeFrameType="monteCarlo" />
-      </div>
+    <ChartCard title="Portfolio" subtitle="Time Series" controls={<ChartTimeFrameDropdown timeFrameType="monteCarlo" />}>
       <MultiSimulationPortfolioAreaChart
         rawChartData={rawChartData}
         keyMetrics={keyMetrics}
@@ -37,6 +29,6 @@ export default function MultiSimulationPortfolioAreaChartCard({
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
       />
-    </Card>
+    </ChartCard>
   );
 }

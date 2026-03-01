@@ -1,8 +1,7 @@
-import Card from '@/components/ui/card';
 import type { MultiSimulationPhasesChartDataPoint } from '@/lib/types/chart-data-points';
-import { Subheading } from '@/components/catalyst/heading';
 
 import MultiSimulationPhasesBarChart from '../../charts/multi-simulation/multi-simulation-phases-bar-chart';
+import ChartCard from '../chart-card';
 
 interface MultiSimulationPhasesBarChartCardProps {
   selectedAge: number;
@@ -11,14 +10,8 @@ interface MultiSimulationPhasesBarChartCardProps {
 
 export default function MultiSimulationPhasesBarChartCard({ selectedAge, rawChartData }: MultiSimulationPhasesBarChartCardProps) {
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3}>
-          <span className="mr-2">Simulations in Phase</span>
-          <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
-        </Subheading>
-      </div>
+    <ChartCard title="Simulations in Phase" subtitle={`Age ${selectedAge}`}>
       <MultiSimulationPhasesBarChart age={selectedAge} rawChartData={rawChartData} />
-    </Card>
+    </ChartCard>
   );
 }

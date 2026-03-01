@@ -3,14 +3,13 @@
 import { EyeIcon, CheckIcon } from 'lucide-react';
 
 import { cn, formatChartString } from '@/lib/utils';
-import Card from '@/components/ui/card';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { TaxesDataView } from '@/lib/types/chart-data-views';
 import type { TaxableIncomeReferenceLineMode, AgiReferenceLineMode } from '@/lib/types/reference-line-modes';
-import { Subheading } from '@/components/catalyst/heading';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu, DropdownLabel } from '@/components/catalyst/dropdown';
 
 import SingleSimulationTaxesBarChart from '../../charts/single-simulation/single-simulation-taxes-bar-chart';
+import ChartCard from '../chart-card';
 
 interface SingleSimulationTaxesBarChartCardProps {
   selectedAge: number;
@@ -85,43 +84,45 @@ export default function SingleSimulationTaxesBarChartCard({
   }
 
   return (
-    <Card className="relative my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3}>
-          <span className="mr-2">{title}</span>
-          <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
-        </Subheading>
-        {dataView === 'taxableIncome' && (
-          <Dropdown>
-            <DropdownButton plain aria-label="Open chart view options" className="absolute top-3 right-3 sm:top-5 sm:right-5">
-              <EyeIcon data-slot="icon" />
-            </DropdownButton>
-            <DropdownMenu>
-              {referenceLineModes.map((referenceLineMode) => (
-                <DropdownItem key={referenceLineMode} onClick={() => setCurrReferenceLineMode(referenceLineMode)}>
-                  <CheckIcon data-slot="icon" className={cn({ invisible: currReferenceLineMode !== referenceLineMode })} />
-                  <DropdownLabel>{formatChartString(referenceLineMode)}</DropdownLabel>
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-        )}
-        {dataView === 'adjustedGrossIncome' && (
-          <Dropdown>
-            <DropdownButton plain aria-label="Open chart view options" className="absolute top-3 right-3 sm:top-5 sm:right-5">
-              <EyeIcon data-slot="icon" />
-            </DropdownButton>
-            <DropdownMenu>
-              {agiReferenceLineModes.map((agiReferenceLineMode) => (
-                <DropdownItem key={agiReferenceLineMode} onClick={() => setCurrAgiReferenceLineMode(agiReferenceLineMode)}>
-                  <CheckIcon data-slot="icon" className={cn({ invisible: currAgiReferenceLineMode !== agiReferenceLineMode })} />
-                  <DropdownLabel>{formatChartString(agiReferenceLineMode)}</DropdownLabel>
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-        )}
-      </div>
+    <ChartCard
+      title={title}
+      subtitle={`Age ${selectedAge}`}
+      className="relative my-0"
+      controls={
+        <>
+          {dataView === 'taxableIncome' && (
+            <Dropdown>
+              <DropdownButton plain aria-label="Open chart view options" className="absolute top-3 right-3 sm:top-5 sm:right-5">
+                <EyeIcon data-slot="icon" />
+              </DropdownButton>
+              <DropdownMenu>
+                {referenceLineModes.map((referenceLineMode) => (
+                  <DropdownItem key={referenceLineMode} onClick={() => setCurrReferenceLineMode(referenceLineMode)}>
+                    <CheckIcon data-slot="icon" className={cn({ invisible: currReferenceLineMode !== referenceLineMode })} />
+                    <DropdownLabel>{formatChartString(referenceLineMode)}</DropdownLabel>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          )}
+          {dataView === 'adjustedGrossIncome' && (
+            <Dropdown>
+              <DropdownButton plain aria-label="Open chart view options" className="absolute top-3 right-3 sm:top-5 sm:right-5">
+                <EyeIcon data-slot="icon" />
+              </DropdownButton>
+              <DropdownMenu>
+                {agiReferenceLineModes.map((agiReferenceLineMode) => (
+                  <DropdownItem key={agiReferenceLineMode} onClick={() => setCurrAgiReferenceLineMode(agiReferenceLineMode)}>
+                    <CheckIcon data-slot="icon" className={cn({ invisible: currAgiReferenceLineMode !== agiReferenceLineMode })} />
+                    <DropdownLabel>{formatChartString(agiReferenceLineMode)}</DropdownLabel>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          )}
+        </>
+      }
+    >
       <SingleSimulationTaxesBarChart
         age={selectedAge}
         rawChartData={rawChartData}
@@ -129,6 +130,6 @@ export default function SingleSimulationTaxesBarChartCard({
         referenceLineMode={dataView === 'taxableIncome' ? currReferenceLineMode : null}
         agiReferenceLineMode={dataView === 'adjustedGrossIncome' ? currAgiReferenceLineMode : null}
       />
-    </Card>
+    </ChartCard>
   );
 }

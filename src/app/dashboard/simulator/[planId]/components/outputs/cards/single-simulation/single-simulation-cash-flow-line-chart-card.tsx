@@ -1,17 +1,28 @@
 'use client';
 
-import { useMemo, useCallback } from 'react';
-
 import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 import type { CashFlowDataView } from '@/lib/types/chart-data-views';
-import { Subheading } from '@/components/catalyst/heading';
+import { useUniqueChartItems } from '@/hooks/use-unique-chart-items';
+import { useDataViewSelectHandler } from '@/hooks/use-data-view-select';
 
 import SingleSimulationCashFlowLineChart from '../../charts/single-simulation/single-simulation-cash-flow-line-chart';
 import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
+import ChartCard from '../chart-card';
+
+const CASH_FLOW_NON_CUSTOM_VIEWS = ['surplusDeficit', 'cashFlow', 'incomes', 'expenses', 'savingsRate'] as const satisfies readonly Exclude<
+  CashFlowDataView,
+  'custom'
+>[];
+
+const extractIncomes = (dp: SingleSimulationCashFlowChartDataPoint) => dp.perIncomeData;
+const extractExpenses = (dp: SingleSimulationCashFlowChartDataPoint) => dp.perExpenseData;
+const extractDebtsAndLoans = (dp: SingleSimulationCashFlowChartDataPoint): Array<{ id: string; name: string }> => [
+  ...dp.perDebtData,
+  ...dp.perAssetData.filter((asset) => asset.paymentType === 'loan'),
+];
 
 interface SingleSimulationCashFlowLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -38,55 +49,26 @@ export default function SingleSimulationCashFlowLineChartCard({
 }: SingleSimulationCashFlowLineChartCardProps) {
   const showReferenceLines = useShowReferenceLines();
 
-  const getUniqueItems = useCallback((items: Array<{ id: string; name: string }>) => {
-    return Array.from(new Map(items.map((item) => [item.id, { id: item.id, name: item.name }])).values());
-  }, []);
+  const uniqueIncomes = useUniqueChartItems(rawChartData, extractIncomes);
+  const uniqueExpenses = useUniqueChartItems(rawChartData, extractExpenses);
+  const uniqueDebtsAndLoans = useUniqueChartItems(rawChartData, extractDebtsAndLoans);
 
-  const uniqueIncomes = useMemo(
-    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perIncomeData)),
-    [getUniqueItems, rawChartData]
-  );
-  const uniqueExpenses = useMemo(
-    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perExpenseData)),
-    [getUniqueItems, rawChartData]
-  );
-  const uniqueDebtsAndLoans = useMemo(() => {
-    const debts = getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perDebtData));
-    const loans = getUniqueItems(
-      rawChartData.flatMap((dataPoint) => dataPoint.perAssetData).filter((asset) => asset.paymentType === 'loan')
-    );
-    return [...debts, ...loans];
-  }, [getUniqueItems, rawChartData]);
+  const { handleSelectChange, getSelectValue } = useDataViewSelectHandler(setDataView, setCustomDataID, CASH_FLOW_NON_CUSTOM_VIEWS);
 
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3} className="truncate">
-          <span className="mr-2">Cash Flow</span>
-          <span className="text-muted-foreground hidden sm:inline">Time Series</span>
-        </Subheading>
-        <div className="flex shrink-0 items-center gap-2">
+    <ChartCard
+      title="Cash Flow"
+      subtitle="Time Series"
+      truncateTitle
+      controls={
+        <>
           <Select
             aria-label="Cash flow data view options"
             className="max-w-48 sm:max-w-64"
             id="cash-flow-data-view"
             name="cash-flow-data-view"
-            value={dataView === 'custom' ? customDataID : dataView}
-            onChange={(e) => {
-              const isCustomSelection =
-                e.target.value !== 'surplusDeficit' &&
-                e.target.value !== 'cashFlow' &&
-                e.target.value !== 'incomes' &&
-                e.target.value !== 'expenses' &&
-                e.target.value !== 'savingsRate';
-              if (isCustomSelection) {
-                setDataView('custom');
-                setCustomDataID(e.target.value);
-              } else {
-                setDataView(e.target.value as CashFlowDataView);
-                setCustomDataID('');
-              }
-            }}
+            value={getSelectValue(dataView, customDataID)}
+            onChange={handleSelectChange}
           >
             <option value="cashFlow">Cash Flow</option>
             <option value="surplusDeficit">Surplus/Deficit</option>
@@ -118,8 +100,9 @@ export default function SingleSimulationCashFlowLineChartCard({
             )}
           </Select>
           <ChartTimeFrameDropdown timeFrameType="single" />
-        </div>
-      </div>
+        </>
+      }
+    >
       <SingleSimulationCashFlowLineChart
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
@@ -130,6 +113,6 @@ export default function SingleSimulationCashFlowLineChartCard({
         customDataID={customDataID}
         startAge={startAge}
       />
-    </Card>
+    </ChartCard>
   );
 }

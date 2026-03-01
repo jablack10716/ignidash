@@ -1,17 +1,28 @@
 'use client';
 
-import { useMemo, useCallback } from 'react';
-
-import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { ReturnsDataView } from '@/lib/types/chart-data-views';
 import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { Subheading } from '@/components/catalyst/heading';
+import { useUniqueChartItems } from '@/hooks/use-unique-chart-items';
+import { useDataViewSelectHandler } from '@/hooks/use-data-view-select';
 
 import SingleSimulationReturnsLineChart from '../../charts/single-simulation/single-simulation-returns-line-chart';
 import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
+import ChartCard from '../chart-card';
+
+const RETURNS_NON_CUSTOM_VIEWS = [
+  'rates',
+  'cagr',
+  'annualAmounts',
+  'cumulativeAmounts',
+  'taxCategory',
+  'appreciation',
+] as const satisfies readonly Exclude<ReturnsDataView, 'custom'>[];
+
+const extractAccounts = (dp: SingleSimulationReturnsChartDataPoint) => dp.perAccountData;
+const extractAssets = (dp: SingleSimulationReturnsChartDataPoint) => dp.perAssetData;
 
 interface SingleSimulationReturnsLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -38,49 +49,25 @@ export default function SingleSimulationReturnsLineChartCard({
 }: SingleSimulationReturnsLineChartCardProps) {
   const showReferenceLines = useShowReferenceLines();
 
-  const getUniqueItems = useCallback((items: Array<{ id: string; name: string }>) => {
-    return Array.from(new Map(items.map((item) => [item.id, { id: item.id, name: item.name }])).values());
-  }, []);
+  const uniqueAccounts = useUniqueChartItems(rawChartData, extractAccounts);
+  const uniquePhysicalAssets = useUniqueChartItems(rawChartData, extractAssets);
 
-  const uniqueAccounts = useMemo(
-    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAccountData)),
-    [getUniqueItems, rawChartData]
-  );
-  const uniquePhysicalAssets = useMemo(
-    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAssetData)),
-    [getUniqueItems, rawChartData]
-  );
+  const { handleSelectChange, getSelectValue } = useDataViewSelectHandler(setDataView, setCustomDataID, RETURNS_NON_CUSTOM_VIEWS);
 
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3} className="truncate">
-          <span className="mr-2">Returns</span>
-          <span className="text-muted-foreground hidden sm:inline">Time Series</span>
-        </Subheading>
-        <div className="flex shrink-0 items-center gap-2">
+    <ChartCard
+      title="Returns"
+      subtitle="Time Series"
+      truncateTitle
+      controls={
+        <>
           <Select
             aria-label="Returns data view options"
             className="max-w-48 sm:max-w-64"
             id="returns-data-view"
             name="returns-data-view"
-            value={dataView === 'custom' ? customDataID : dataView}
-            onChange={(e) => {
-              const isCustomSelection =
-                e.target.value !== 'rates' &&
-                e.target.value !== 'cagr' &&
-                e.target.value !== 'annualAmounts' &&
-                e.target.value !== 'cumulativeAmounts' &&
-                e.target.value !== 'taxCategory' &&
-                e.target.value !== 'appreciation';
-              if (isCustomSelection) {
-                setDataView('custom');
-                setCustomDataID(e.target.value);
-              } else {
-                setDataView(e.target.value as ReturnsDataView);
-                setCustomDataID('');
-              }
-            }}
+            value={getSelectValue(dataView, customDataID)}
+            onChange={handleSelectChange}
           >
             <optgroup label="Return Rates">
               <option value="rates">Real Annual Rates</option>
@@ -112,8 +99,9 @@ export default function SingleSimulationReturnsLineChartCard({
             )}
           </Select>
           <ChartTimeFrameDropdown timeFrameType="single" />
-        </div>
-      </div>
+        </>
+      }
+    >
       <SingleSimulationReturnsLineChart
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
@@ -124,6 +112,6 @@ export default function SingleSimulationReturnsLineChartCard({
         customDataID={customDataID}
         startAge={startAge}
       />
-    </Card>
+    </ChartCard>
   );
 }

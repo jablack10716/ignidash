@@ -1,17 +1,29 @@
 'use client';
 
-import { useMemo, useCallback } from 'react';
-
-import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { WithdrawalsDataView } from '@/lib/types/chart-data-views';
 import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { Subheading } from '@/components/catalyst/heading';
+import { useUniqueChartItems } from '@/hooks/use-unique-chart-items';
+import { useDataViewSelectHandler } from '@/hooks/use-data-view-select';
 
 import SingleSimulationWithdrawalsLineChart from '../../charts/single-simulation/single-simulation-withdrawals-line-chart';
 import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
+import ChartCard from '../chart-card';
+
+const WITHDRAWALS_NON_CUSTOM_VIEWS = [
+  'annualAmounts',
+  'cumulativeAmounts',
+  'taxCategory',
+  'realizedGains',
+  'requiredMinimumDistributions',
+  'earlyWithdrawals',
+  'shortfall',
+  'withdrawalRate',
+] as const satisfies readonly Exclude<WithdrawalsDataView, 'custom'>[];
+
+const extractAccounts = (dp: SingleSimulationWithdrawalsChartDataPoint) => dp.perAccountData;
 
 interface SingleSimulationWithdrawalsLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -38,47 +50,24 @@ export default function SingleSimulationWithdrawalsLineChartCard({
 }: SingleSimulationWithdrawalsLineChartCardProps) {
   const showReferenceLines = useShowReferenceLines();
 
-  const getUniqueItems = useCallback((items: Array<{ id: string; name: string }>) => {
-    return Array.from(new Map(items.map((item) => [item.id, { id: item.id, name: item.name }])).values());
-  }, []);
+  const uniqueAccounts = useUniqueChartItems(rawChartData, extractAccounts);
 
-  const uniqueAccounts = useMemo(
-    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAccountData)),
-    [getUniqueItems, rawChartData]
-  );
+  const { handleSelectChange, getSelectValue } = useDataViewSelectHandler(setDataView, setCustomDataID, WITHDRAWALS_NON_CUSTOM_VIEWS);
 
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3} className="truncate">
-          <span className="mr-2">Withdrawals</span>
-          <span className="text-muted-foreground hidden sm:inline">Time Series</span>
-        </Subheading>
-        <div className="flex shrink-0 items-center gap-2">
+    <ChartCard
+      title="Withdrawals"
+      subtitle="Time Series"
+      truncateTitle
+      controls={
+        <>
           <Select
             aria-label="Withdrawals data view options"
             className="max-w-48 sm:max-w-64"
             id="withdrawals-data-view"
             name="withdrawals-data-view"
-            value={dataView === 'custom' ? customDataID : dataView}
-            onChange={(e) => {
-              const isCustomSelection =
-                e.target.value !== 'annualAmounts' &&
-                e.target.value !== 'cumulativeAmounts' &&
-                e.target.value !== 'taxCategory' &&
-                e.target.value !== 'realizedGains' &&
-                e.target.value !== 'requiredMinimumDistributions' &&
-                e.target.value !== 'earlyWithdrawals' &&
-                e.target.value !== 'shortfall' &&
-                e.target.value !== 'withdrawalRate';
-              if (isCustomSelection) {
-                setDataView('custom');
-                setCustomDataID(e.target.value);
-              } else {
-                setDataView(e.target.value as WithdrawalsDataView);
-                setCustomDataID('');
-              }
-            }}
+            value={getSelectValue(dataView, customDataID)}
+            onChange={handleSelectChange}
           >
             <option value="taxCategory">Tax Category</option>
             <option value="annualAmounts">Annual Withdrawals</option>
@@ -101,8 +90,9 @@ export default function SingleSimulationWithdrawalsLineChartCard({
             </optgroup>
           </Select>
           <ChartTimeFrameDropdown timeFrameType="single" />
-        </div>
-      </div>
+        </>
+      }
+    >
       <SingleSimulationWithdrawalsLineChart
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
@@ -113,6 +103,6 @@ export default function SingleSimulationWithdrawalsLineChartCard({
         customDataID={customDataID}
         startAge={startAge}
       />
-    </Card>
+    </ChartCard>
   );
 }

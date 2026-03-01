@@ -1,17 +1,32 @@
 'use client';
 
-import { useMemo, useCallback } from 'react';
-
 import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
 import type { NetWorthDataView } from '@/lib/types/chart-data-views';
-import { Subheading } from '@/components/catalyst/heading';
+import { useUniqueChartItems } from '@/hooks/use-unique-chart-items';
+import { useDataViewSelectHandler } from '@/hooks/use-data-view-select';
 
 import SingleSimulationNetWorthAreaChart from '../../charts/single-simulation/single-simulation-net-worth-area-chart';
 import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
+import ChartCard from '../chart-card';
+
+const NET_WORTH_NON_CUSTOM_VIEWS = [
+  'assetClass',
+  'taxCategory',
+  'netPortfolioChange',
+  'netWorth',
+  'netWorthChange',
+  'assetEquity',
+  'netAssetChange',
+  'debts',
+  'netDebtReduction',
+] as const satisfies readonly Exclude<NetWorthDataView, 'custom'>[];
+
+const extractAccounts = (dp: SingleSimulationNetWorthChartDataPoint) => dp.perAccountData;
+const extractAssets = (dp: SingleSimulationNetWorthChartDataPoint) => dp.perAssetData;
+const extractDebts = (dp: SingleSimulationNetWorthChartDataPoint) => dp.perDebtData;
 
 interface SingleSimulationNetWorthAreaChartCardProps {
   rawChartData: SingleSimulationNetWorthChartDataPoint[];
@@ -38,56 +53,26 @@ export default function SingleSimulationNetWorthAreaChartCard({
 }: SingleSimulationNetWorthAreaChartCardProps) {
   const showReferenceLines = useShowReferenceLines();
 
-  const getUniqueItems = useCallback((items: Array<{ id: string; name: string }>) => {
-    return Array.from(new Map(items.map((item) => [item.id, { id: item.id, name: item.name }])).values());
-  }, []);
+  const uniqueAccounts = useUniqueChartItems(rawChartData, extractAccounts);
+  const uniquePhysicalAssets = useUniqueChartItems(rawChartData, extractAssets);
+  const uniqueDebts = useUniqueChartItems(rawChartData, extractDebts);
 
-  const uniqueAccounts = useMemo(
-    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAccountData)),
-    [getUniqueItems, rawChartData]
-  );
-  const uniquePhysicalAssets = useMemo(
-    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAssetData)),
-    [getUniqueItems, rawChartData]
-  );
-  const uniqueDebts = useMemo(
-    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perDebtData)),
-    [getUniqueItems, rawChartData]
-  );
+  const { handleSelectChange, getSelectValue } = useDataViewSelectHandler(setDataView, setCustomDataID, NET_WORTH_NON_CUSTOM_VIEWS);
 
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3} className="truncate">
-          <span className="mr-2">Net Worth</span>
-          <span className="text-muted-foreground hidden sm:inline">Time Series</span>
-        </Subheading>
-        <div className="flex shrink-0 items-center gap-2">
+    <ChartCard
+      title="Net Worth"
+      subtitle="Time Series"
+      truncateTitle
+      controls={
+        <>
           <Select
             aria-label="Net worth data view options"
             className="max-w-48 sm:max-w-64"
             id="net-worth-data-view"
             name="net-worth-data-view"
-            value={dataView === 'custom' ? customDataID : dataView}
-            onChange={(e) => {
-              const isCustomSelection =
-                e.target.value !== 'assetClass' &&
-                e.target.value !== 'taxCategory' &&
-                e.target.value !== 'netPortfolioChange' &&
-                e.target.value !== 'netWorth' &&
-                e.target.value !== 'netWorthChange' &&
-                e.target.value !== 'assetEquity' &&
-                e.target.value !== 'netAssetChange' &&
-                e.target.value !== 'debts' &&
-                e.target.value !== 'netDebtReduction';
-              if (isCustomSelection) {
-                setDataView('custom');
-                setCustomDataID(e.target.value);
-              } else {
-                setDataView(e.target.value as NetWorthDataView);
-                setCustomDataID('');
-              }
-            }}
+            value={getSelectValue(dataView, customDataID)}
+            onChange={handleSelectChange}
           >
             <option value="netWorth">Net Worth</option>
             <option value="netWorthChange">Net Worth Change</option>
@@ -131,8 +116,9 @@ export default function SingleSimulationNetWorthAreaChartCard({
             )}
           </Select>
           <ChartTimeFrameDropdown timeFrameType="single" />
-        </div>
-      </div>
+        </>
+      }
+    >
       <SingleSimulationNetWorthAreaChart
         rawChartData={rawChartData}
         startAge={startAge}
@@ -143,6 +129,6 @@ export default function SingleSimulationNetWorthAreaChartCard({
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
       />
-    </Card>
+    </ChartCard>
   );
 }

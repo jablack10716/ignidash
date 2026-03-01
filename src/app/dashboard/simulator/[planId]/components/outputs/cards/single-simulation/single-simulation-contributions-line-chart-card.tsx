@@ -1,17 +1,26 @@
 'use client';
 
-import { useMemo, useCallback } from 'react';
-
-import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationContributionsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { ContributionsDataView } from '@/lib/types/chart-data-views';
 import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { Subheading } from '@/components/catalyst/heading';
+import { useUniqueChartItems } from '@/hooks/use-unique-chart-items';
+import { useDataViewSelectHandler } from '@/hooks/use-data-view-select';
 
 import SingleSimulationContributionsLineChart from '../../charts/single-simulation/single-simulation-contributions-line-chart';
 import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
+import ChartCard from '../chart-card';
+
+const CONTRIBUTIONS_NON_CUSTOM_VIEWS = [
+  'annualAmounts',
+  'cumulativeAmounts',
+  'taxCategory',
+  'employerMatch',
+  'shortfall',
+] as const satisfies readonly Exclude<ContributionsDataView, 'custom'>[];
+
+const extractAccounts = (dp: SingleSimulationContributionsChartDataPoint) => dp.perAccountData;
 
 interface SingleSimulationContributionsLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -38,44 +47,24 @@ export default function SingleSimulationContributionsLineChartCard({
 }: SingleSimulationContributionsLineChartCardProps) {
   const showReferenceLines = useShowReferenceLines();
 
-  const getUniqueItems = useCallback((items: Array<{ id: string; name: string }>) => {
-    return Array.from(new Map(items.map((item) => [item.id, { id: item.id, name: item.name }])).values());
-  }, []);
+  const uniqueAccounts = useUniqueChartItems(rawChartData, extractAccounts);
 
-  const uniqueAccounts = useMemo(
-    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAccountData)),
-    [getUniqueItems, rawChartData]
-  );
+  const { handleSelectChange, getSelectValue } = useDataViewSelectHandler(setDataView, setCustomDataID, CONTRIBUTIONS_NON_CUSTOM_VIEWS);
 
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3} className="truncate">
-          <span className="mr-2">Contributions</span>
-          <span className="text-muted-foreground hidden sm:inline">Time Series</span>
-        </Subheading>
-        <div className="flex shrink-0 items-center gap-2">
+    <ChartCard
+      title="Contributions"
+      subtitle="Time Series"
+      truncateTitle
+      controls={
+        <>
           <Select
             aria-label="Contributions data view options"
             className="max-w-48 sm:max-w-64"
             id="contributions-data-view"
             name="contributions-data-view"
-            value={dataView === 'custom' ? customDataID : dataView}
-            onChange={(e) => {
-              const isCustomSelection =
-                e.target.value !== 'annualAmounts' &&
-                e.target.value !== 'cumulativeAmounts' &&
-                e.target.value !== 'taxCategory' &&
-                e.target.value !== 'employerMatch' &&
-                e.target.value !== 'shortfall';
-              if (isCustomSelection) {
-                setDataView('custom');
-                setCustomDataID(e.target.value);
-              } else {
-                setDataView(e.target.value as ContributionsDataView);
-                setCustomDataID('');
-              }
-            }}
+            value={getSelectValue(dataView, customDataID)}
+            onChange={handleSelectChange}
           >
             <option value="taxCategory">Tax Category</option>
             <option value="annualAmounts">Annual Contributions</option>
@@ -91,8 +80,9 @@ export default function SingleSimulationContributionsLineChartCard({
             </optgroup>
           </Select>
           <ChartTimeFrameDropdown timeFrameType="single" />
-        </div>
-      </div>
+        </>
+      }
+    >
       <SingleSimulationContributionsLineChart
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
@@ -103,6 +93,6 @@ export default function SingleSimulationContributionsLineChartCard({
         customDataID={customDataID}
         startAge={startAge}
       />
-    </Card>
+    </ChartCard>
   );
 }

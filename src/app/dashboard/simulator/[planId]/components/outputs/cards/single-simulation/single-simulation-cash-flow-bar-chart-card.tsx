@@ -1,12 +1,11 @@
 'use client';
 
-import Card from '@/components/ui/card';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 import type { CashFlowDataView } from '@/lib/types/chart-data-views';
-import { Subheading } from '@/components/catalyst/heading';
 import { useIncomeData, useExpenseData, usePhysicalAssetData, useDebtData } from '@/hooks/use-convex-data';
 
 import SingleSimulationCashFlowBarChart from '../../charts/single-simulation/single-simulation-cash-flow-bar-chart';
+import ChartCard from '../chart-card';
 
 interface SingleSimulationCashFlowBarChartCardProps {
   selectedAge: number;
@@ -59,14 +58,8 @@ export default function SingleSimulationCashFlowBarChartCard({
   }
 
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3}>
-          <span className="mr-2">{title}</span>
-          <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
-        </Subheading>
-      </div>
+    <ChartCard title={title} subtitle={`Age ${selectedAge}`}>
       <SingleSimulationCashFlowBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} customDataID={customDataID} />
-    </Card>
+    </ChartCard>
   );
 }

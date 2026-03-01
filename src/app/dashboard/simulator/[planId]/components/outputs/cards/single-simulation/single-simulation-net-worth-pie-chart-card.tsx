@@ -4,8 +4,6 @@ import { Fragment } from 'react';
 
 import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
 import type { NetWorthDataView } from '@/lib/types/chart-data-views';
-import Card from '@/components/ui/card';
-import { Subheading } from '@/components/catalyst/heading';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { formatChartString, formatNumber } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
@@ -15,6 +13,7 @@ import { zeroAssetAmounts, type AssetAllocation } from '@/lib/calc/asset';
 
 import SingleSimulationNetWorthPieChart from '../../charts/single-simulation/single-simulation-net-worth-pie-chart';
 import SingleSimulationNetWorthBarChart from '../../charts/single-simulation/single-simulation-net-worth-bar-chart';
+import ChartCard from '../chart-card';
 
 interface SingleSimulationNetWorthPieChartCardProps {
   rawChartData: SingleSimulationNetWorthChartDataPoint[];
@@ -231,14 +230,8 @@ export default function SingleSimulationNetWorthPieChartCard({
   }
 
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3}>
-          <span className="mr-2">{title}</span>
-          <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
-        </Subheading>
-      </div>
+    <ChartCard title={title} subtitle={`Age ${selectedAge}`}>
       {chart}
-    </Card>
+    </ChartCard>
   );
 }

@@ -1,15 +1,14 @@
 'use client';
 
-import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { TaxesDataView } from '@/lib/types/chart-data-views';
 import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { Subheading } from '@/components/catalyst/heading';
 
 import SingleSimulationTaxesLineChart from '../../charts/single-simulation/single-simulation-taxes-line-chart';
 import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
+import ChartCard from '../chart-card';
 
 interface SingleSimulationTaxesLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -33,13 +32,12 @@ export default function SingleSimulationTaxesLineChartCard({
   const showReferenceLines = useShowReferenceLines();
 
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3} className="truncate">
-          <span className="mr-2">Taxes</span>
-          <span className="text-muted-foreground hidden sm:inline">Time Series</span>
-        </Subheading>
-        <div className="flex shrink-0 items-center gap-2">
+    <ChartCard
+      title="Taxes"
+      subtitle="Time Series"
+      truncateTitle
+      controls={
+        <>
           <Select
             aria-label="Taxes data view options"
             className="max-w-48 sm:max-w-64"
@@ -77,8 +75,9 @@ export default function SingleSimulationTaxesLineChartCard({
             </optgroup>
           </Select>
           <ChartTimeFrameDropdown timeFrameType="single" />
-        </div>
-      </div>
+        </>
+      }
+    >
       <SingleSimulationTaxesLineChart
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
@@ -88,6 +87,6 @@ export default function SingleSimulationTaxesLineChartCard({
         dataView={dataView}
         startAge={startAge}
       />
-    </Card>
+    </ChartCard>
   );
 }

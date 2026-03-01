@@ -1,13 +1,12 @@
 'use client';
 
-import Card from '@/components/ui/card';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { ReturnsDataView } from '@/lib/types/chart-data-views';
-import { Subheading } from '@/components/catalyst/heading';
 import { useAccountData, usePhysicalAssetData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 
 import SingleSimulationReturnsBarChart from '../../charts/single-simulation/single-simulation-returns-bar-chart';
+import ChartCard from '../chart-card';
 
 interface SingleSimulationReturnsBarChartCardProps {
   selectedAge: number;
@@ -57,14 +56,8 @@ export default function SingleSimulationReturnsBarChartCard({
   }
 
   return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3}>
-          <span className="mr-2">{title}</span>
-          <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
-        </Subheading>
-      </div>
+    <ChartCard title={title} subtitle={`Age ${selectedAge}`}>
       <SingleSimulationReturnsBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} customDataID={customDataID} />
-    </Card>
+    </ChartCard>
   );
 }
