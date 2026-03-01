@@ -9,7 +9,7 @@ import type { Doc } from '@/convex/_generated/dataModel';
 import { Heading } from '@/components/catalyst/heading';
 import { Button } from '@/components/catalyst/button';
 import { simulatorFromConvex } from '@/lib/utils/data-transformers';
-import { useSimulationResult, useKeyMetrics, useIsCalculationReady, useUpdateInsightsSelectedPlan } from '@/lib/stores/simulator-store';
+import { useSimulationResult, useKeyMetrics, useUpdateInsightsSelectedPlan, getIsCalculationReady } from '@/lib/stores/simulator-store';
 
 interface PlanListItemProps {
   plan: Doc<'plans'>;
@@ -18,7 +18,7 @@ interface PlanListItemProps {
 function PlanListItem({ plan }: PlanListItemProps) {
   const inputs = useMemo(() => simulatorFromConvex(plan), [plan]);
 
-  const { timelineIsReady, accountsAreReady, incomesAreReady, expensesAreReady } = useIsCalculationReady(inputs);
+  const { timelineIsReady, accountsAreReady, incomesAreReady, expensesAreReady } = getIsCalculationReady(inputs);
   const isCalculationReady = timelineIsReady && accountsAreReady && incomesAreReady && expensesAreReady;
 
   const simulation = useSimulationResult(inputs, 'fixedReturns');

@@ -15,9 +15,9 @@ import { Button } from '@/components/catalyst/button';
 import { Heading } from '@/components/catalyst/heading';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 import {
+  getIsCalculationReady,
   useSimulationResult,
   useKeyMetrics,
-  useIsCalculationReady,
   useInsightsSelectedPlan,
   useUpdateInsightsSelectedPlan,
   useClearSelectedConversationId,
@@ -52,7 +52,7 @@ function PlanListItem({
 
   const inputs = useMemo(() => simulatorFromConvex(plan), [plan]);
 
-  const { timelineIsReady, accountsAreReady, incomesAreReady, expensesAreReady } = useIsCalculationReady(inputs);
+  const { timelineIsReady, accountsAreReady, incomesAreReady, expensesAreReady } = getIsCalculationReady(inputs);
   const isCalculationReady = timelineIsReady && accountsAreReady && incomesAreReady && expensesAreReady;
 
   const simulation = useSimulationResult(inputs, 'fixedReturns');

@@ -11,7 +11,7 @@ import {
   useTaxSettingsData,
   useAssetData,
 } from '@/hooks/use-convex-data';
-import { useIsCalculationReady, useHasOpenedTaxSettings, useUpdateHasOpenedTaxSettings } from '@/lib/stores/simulator-store';
+import { getIsCalculationReady, useHasOpenedTaxSettings, useUpdateHasOpenedTaxSettings } from '@/lib/stores/simulator-store';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { Subheading } from '@/components/catalyst/heading';
 import { HourglassIcon, LandmarkIcon, BanknoteArrowUpIcon, BanknoteArrowDownIcon, BanknoteXIcon } from 'lucide-react';
@@ -35,7 +35,7 @@ export default function ResultsSections() {
   const planId = useSelectedPlanId();
   const { data: inputs, isLoading } = usePlanData();
 
-  const { timelineIsReady, accountsAreReady, incomesAreReady, expensesAreReady } = useIsCalculationReady(inputs);
+  const { timelineIsReady, accountsAreReady, incomesAreReady, expensesAreReady } = getIsCalculationReady(inputs);
 
   const hasOpenedTaxSettings = useHasOpenedTaxSettings(planId);
   const updateHasOpenedTaxSettings = useUpdateHasOpenedTaxSettings();

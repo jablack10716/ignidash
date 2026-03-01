@@ -615,10 +615,9 @@ export const useSingleSimulationWithdrawalsTableData = (simulation: SimulationRe
 };
 
 /**
- * Validation State Selectors
- * These hooks check if sections or the entire form have valid data for calculations
+ * Validation Helpers
  */
-export const useIsCalculationReady = (inputs: SimulatorInputs | null) => {
+export const getIsCalculationReady = (inputs: SimulatorInputs | null) => {
   if (!inputs) return { timelineIsReady: false, accountsAreReady: false, incomesAreReady: false, expensesAreReady: false };
 
   const { timeline, accounts, incomes, expenses } = inputs;
