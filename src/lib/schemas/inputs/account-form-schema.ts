@@ -8,7 +8,7 @@
 
 import { z } from 'zod';
 
-import { currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-utils';
+import { currencyFieldAllowsZero, optionalCurrencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-utils';
 import type { TaxCategory } from '@/lib/calc/asset';
 
 const baseAccountSchema = z.object({
@@ -33,14 +33,14 @@ export const accountFormSchema = z.discriminatedUnion('type', [
   z.object({
     ...investmentAccountSchema.shape,
     type: z.literal('taxableBrokerage'),
-    costBasis: currencyFieldAllowsZero('Cost basis cannot be negative').optional(),
+    costBasis: optionalCurrencyFieldAllowsZero('Cost basis cannot be negative'),
   }),
 
   // Roth
   z.object({
     ...investmentAccountSchema.shape,
     type: z.enum(['roth401k', 'roth403b', 'rothIra']),
-    contributionBasis: currencyFieldAllowsZero('Contribution basis cannot be negative').optional(),
+    contributionBasis: optionalCurrencyFieldAllowsZero('Contribution basis cannot be negative'),
   }),
 
   // Tax Deferred

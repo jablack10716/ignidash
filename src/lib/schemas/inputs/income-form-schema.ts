@@ -8,7 +8,7 @@
 
 import { z } from 'zod';
 
-import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-utils';
+import { currencyFieldForbidsZero, optionalPercentageField } from '@/lib/utils/zod-utils';
 
 import { growthSchema, frequencyTimeframeSchema } from './income-expenses-shared-schemas';
 
@@ -17,7 +17,7 @@ export type IncomeType = 'wage' | 'socialSecurity' | 'exempt' | 'selfEmployment'
 export const incomeTaxSchema = z
   .object({
     incomeType: z.enum(['wage', 'socialSecurity', 'exempt', 'selfEmployment', 'pension']),
-    withholding: percentageField(0, 50, 'Withholding').optional(),
+    withholding: optionalPercentageField(0, 50, 'Withholding'),
   })
   .refine(
     (data) => {

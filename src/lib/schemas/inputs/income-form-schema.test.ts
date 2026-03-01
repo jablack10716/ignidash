@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { supportsWithholding, defaultWithholding } from './income-form-schema';
+import { incomeFormSchema, supportsWithholding, defaultWithholding } from './income-form-schema';
 import type { IncomeType } from './income-form-schema';
 
 const ALL_INCOME_TYPES: IncomeType[] = ['wage', 'socialSecurity', 'exempt', 'selfEmployment', 'pension'];
@@ -37,5 +37,127 @@ describe('defaultWithholding', () => {
       const result = defaultWithholding(type);
       expect(result === undefined || typeof result === 'number').toBe(true);
     }
+  });
+});
+
+const validIncome = {
+  id: 'test-id',
+  name: 'Salary',
+  amount: 85000,
+  frequency: 'yearly' as const,
+  timeframe: {
+    start: { type: 'now' as const },
+    end: { type: 'atRetirement' as const },
+  },
+  taxes: { incomeType: 'wage' as const, withholding: 20 },
+};
+
+describe('incomeFormSchema', () => {
+  it('should accept valid wage income with withholding', () => {
+    expect(incomeFormSchema.safeParse(validIncome).success).toBe(true);
+  });
+
+  it('should accept exempt income without withholding', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      taxes: { incomeType: 'exempt' },
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept socialSecurity with valid withholding rate', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      taxes: { incomeType: 'socialSecurity', withholding: 7 },
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should coerce string amount', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      amount: '85000',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject wage income without withholding', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      taxes: { incomeType: 'wage' },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject socialSecurity with invalid withholding rate', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      taxes: { incomeType: 'socialSecurity', withholding: 15 },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject selfEmployment (not yet supported)', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      taxes: { incomeType: 'selfEmployment' },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject pension (not yet supported)', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      taxes: { incomeType: 'pension' },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject positive growth rate with growthLimit <= amount', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      growth: { growthRate: 3, growthLimit: 50000 },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject negative growth rate with growthLimit >= amount', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      growth: { growthRate: -3, growthLimit: 90000 },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should accept growth with no growthLimit', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      growth: { growthRate: 3 },
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject growthLimit set without growthRate', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      growth: { growthLimit: 100000 },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject amount = 0', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      amount: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject empty string amount', () => {
+    const result = incomeFormSchema.safeParse({
+      ...validIncome,
+      amount: '',
+    });
+    expect(result.success).toBe(false);
   });
 });

@@ -7,7 +7,7 @@
  */
 
 import { z } from 'zod';
-import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-utils';
+import { currencyFieldForbidsZero, optionalCurrencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-utils';
 
 import type { AccountInputs } from './account-form-schema';
 
@@ -21,10 +21,10 @@ const sharedContributionSchema = z.object({
   id: z.string(),
   accountId: z.string(),
   rank: z.number().int().min(0),
-  maxBalance: currencyFieldForbidsZero('Max balance must be greater than zero').optional(),
+  maxBalance: optionalCurrencyFieldForbidsZero('Max balance must be greater than zero'),
   incomeId: z.string().optional(),
   disabled: z.boolean().optional(),
-  employerMatch: currencyFieldForbidsZero('Employer match must be greater than zero').optional(),
+  employerMatch: optionalCurrencyFieldForbidsZero('Employer match must be greater than zero'),
   enableMegaBackdoorRoth: z.boolean().optional(),
 });
 

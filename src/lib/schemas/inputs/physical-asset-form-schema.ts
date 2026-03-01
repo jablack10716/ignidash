@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { currencyFieldForbidsZero, currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-utils';
+import {
+  currencyFieldForbidsZero,
+  optionalCurrencyFieldForbidsZero,
+  optionalCurrencyFieldAllowsZero,
+  percentageField,
+} from '@/lib/utils/zod-utils';
 import { timePointSchema } from './income-expenses-shared-schemas';
 
 export const physicalAssetTypeSchema = z.enum(['primaryResidence', 'other']);
@@ -12,7 +17,7 @@ const cashPaymentSchema = z.object({
 
 const loanPaymentSchema = z.object({
   type: z.literal('loan'),
-  downPayment: currencyFieldAllowsZero('Down payment cannot be negative').optional(),
+  downPayment: optionalCurrencyFieldAllowsZero('Down payment cannot be negative'),
   loanBalance: currencyFieldForbidsZero('Loan balance must be greater than zero'),
   apr: percentageField(0, 25, 'APR'),
   monthlyPayment: currencyFieldForbidsZero('Monthly payment must be greater than zero'),
@@ -29,7 +34,7 @@ export const physicalAssetFormSchema = z
     assetType: physicalAssetTypeSchema,
     purchaseDate: timePointSchema,
     purchasePrice: currencyFieldForbidsZero('Purchase price must be greater than zero'),
-    marketValue: currencyFieldForbidsZero('Market value must be greater than zero').optional(),
+    marketValue: optionalCurrencyFieldForbidsZero('Market value must be greater than zero'),
     appreciationRate: percentageField(-30, 20, 'Annual appreciation rate'),
     saleDate: timePointSchema,
     paymentMethod: paymentMethodSchema,

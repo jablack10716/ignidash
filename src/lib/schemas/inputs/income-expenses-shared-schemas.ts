@@ -8,7 +8,7 @@
 
 import { z } from 'zod';
 
-import { percentageField, currencyFieldAllowsZero } from '@/lib/utils/zod-utils';
+import { optionalPercentageField, optionalCurrencyFieldAllowsZero } from '@/lib/utils/zod-utils';
 export const timePointSchema = z
   .object({
     type: z.enum(['now', 'atRetirement', 'atLifeExpectancy', 'customDate', 'customAge']),
@@ -65,8 +65,8 @@ export type FrequencyTimeframe = z.infer<typeof frequencyTimeframeSchema>;
 // Shared growth schema for income and expenses
 export const growthSchema = z
   .object({
-    growthRate: percentageField(-50, 50, 'Growth rate').optional(),
-    growthLimit: currencyFieldAllowsZero('Growth limit cannot be negative').optional(),
+    growthRate: optionalPercentageField(-50, 50, 'Growth rate'),
+    growthLimit: optionalCurrencyFieldAllowsZero('Growth limit cannot be negative'),
   })
   .refine(
     (data) => {

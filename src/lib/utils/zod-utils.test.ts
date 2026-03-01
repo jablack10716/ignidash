@@ -1,5 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { coerceNumber, currencyFieldAllowsZero, currencyFieldForbidsZero, percentageField, ageField } from './zod-utils';
+import {
+  coerceNumber,
+  optionalCoerceNumber,
+  currencyFieldAllowsZero,
+  optionalCurrencyFieldAllowsZero,
+  currencyFieldForbidsZero,
+  optionalCurrencyFieldForbidsZero,
+  percentageField,
+  optionalPercentageField,
+  ageField,
+} from './zod-utils';
 import { z } from 'zod';
 
 describe('coerceNumber', () => {
@@ -10,15 +20,15 @@ describe('coerceNumber', () => {
     expect(schema.parse('3.14')).toBeCloseTo(3.14);
   });
 
-  it('should coerce empty string to null', () => {
+  it('should reject empty string', () => {
     expect(schema.safeParse('').success).toBe(false);
   });
 
-  it('should coerce null to null', () => {
+  it('should reject null', () => {
     expect(schema.safeParse(null).success).toBe(false);
   });
 
-  it('should coerce undefined to null', () => {
+  it('should reject undefined', () => {
     expect(schema.safeParse(undefined).success).toBe(false);
   });
 
@@ -130,5 +140,101 @@ describe('ageField', () => {
     if (!tooOld.success) {
       expect(tooOld.error.issues[0].message).toBe('Too old!');
     }
+  });
+});
+
+describe('optionalCoerceNumber', () => {
+  const schema = optionalCoerceNumber(z.number().positive());
+
+  it('should return undefined for empty string', () => {
+    expect(schema.parse('')).toBeUndefined();
+  });
+
+  it('should return undefined for null', () => {
+    expect(schema.parse(null)).toBeUndefined();
+  });
+
+  it('should return undefined for undefined', () => {
+    expect(schema.parse(undefined)).toBeUndefined();
+  });
+
+  it('should coerce valid string to number', () => {
+    expect(schema.parse('42')).toBe(42);
+  });
+
+  it('should pass through numbers', () => {
+    expect(schema.parse(100)).toBe(100);
+  });
+
+  it('should still reject values failing inner constraints', () => {
+    expect(schema.safeParse(-1).success).toBe(false);
+    expect(schema.safeParse(0).success).toBe(false);
+  });
+});
+
+describe('optionalCurrencyFieldAllowsZero', () => {
+  const schema = optionalCurrencyFieldAllowsZero();
+
+  it('should accept zero', () => {
+    expect(schema.parse(0)).toBe(0);
+  });
+
+  it('should accept positive values', () => {
+    expect(schema.parse(50000)).toBe(50000);
+  });
+
+  it('should accept undefined (empty)', () => {
+    expect(schema.parse('')).toBeUndefined();
+    expect(schema.parse(undefined)).toBeUndefined();
+  });
+
+  it('should reject negative values', () => {
+    expect(schema.safeParse(-1).success).toBe(false);
+  });
+});
+
+describe('optionalCurrencyFieldForbidsZero', () => {
+  const schema = optionalCurrencyFieldForbidsZero();
+
+  it('should reject zero', () => {
+    expect(schema.safeParse(0).success).toBe(false);
+  });
+
+  it('should accept positive values', () => {
+    expect(schema.parse(1)).toBe(1);
+  });
+
+  it('should accept undefined (empty)', () => {
+    expect(schema.parse('')).toBeUndefined();
+    expect(schema.parse(undefined)).toBeUndefined();
+  });
+
+  it('should reject negative values', () => {
+    expect(schema.safeParse(-100).success).toBe(false);
+  });
+});
+
+describe('optionalPercentageField', () => {
+  it('should use default range 0-100', () => {
+    const schema = optionalPercentageField();
+    expect(schema.parse(0)).toBe(0);
+    expect(schema.parse(50)).toBe(50);
+    expect(schema.parse(100)).toBe(100);
+    expect(schema.safeParse(-1).success).toBe(false);
+    expect(schema.safeParse(101).success).toBe(false);
+  });
+
+  it('should accept undefined (empty)', () => {
+    const schema = optionalPercentageField();
+    expect(schema.parse('')).toBeUndefined();
+    expect(schema.parse(undefined)).toBeUndefined();
+  });
+
+  it('should use custom range', () => {
+    const schema = optionalPercentageField(10, 50, 'Rate');
+    expect(schema.parse(10)).toBe(10);
+    expect(schema.parse(50)).toBe(50);
+    expect(schema.safeParse(9).success).toBe(false);
+    expect(schema.safeParse(51).success).toBe(false);
   });
 });

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  contributionFormSchema,
   getAccountTypeLimitKey,
   getAnnualContributionLimit,
   getAnnualSection415cLimit,
@@ -142,5 +143,101 @@ describe('supportsMegaBackdoorRoth', () => {
     for (const type of ALL_ACCOUNT_TYPES) {
       expect(supportsMegaBackdoorRoth(type)).toBe(supported.has(type));
     }
+  });
+});
+
+const validDollarContribution = {
+  id: 'test-id',
+  accountId: 'acc-123',
+  rank: 0,
+  contributionType: 'dollarAmount' as const,
+  dollarAmount: 6000,
+};
+
+describe('contributionFormSchema', () => {
+  it('should accept valid dollarAmount contribution', () => {
+    expect(contributionFormSchema.safeParse(validDollarContribution).success).toBe(true);
+  });
+
+  it('should accept valid percentRemaining contribution', () => {
+    const result = contributionFormSchema.safeParse({
+      id: 'test-id',
+      accountId: 'acc-123',
+      rank: 0,
+      contributionType: 'percentRemaining',
+      percentRemaining: 50,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept unlimited contribution', () => {
+    const result = contributionFormSchema.safeParse({
+      id: 'test-id',
+      accountId: 'acc-123',
+      rank: 0,
+      contributionType: 'unlimited',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject empty accountId', () => {
+    const result = contributionFormSchema.safeParse({
+      ...validDollarContribution,
+      accountId: '',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject dollarAmount = 0', () => {
+    const result = contributionFormSchema.safeParse({
+      ...validDollarContribution,
+      dollarAmount: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject percentRemaining > 100', () => {
+    const result = contributionFormSchema.safeParse({
+      id: 'test-id',
+      accountId: 'acc-123',
+      rank: 0,
+      contributionType: 'percentRemaining',
+      percentRemaining: 101,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should coerce string dollarAmount', () => {
+    const result = contributionFormSchema.safeParse({
+      ...validDollarContribution,
+      dollarAmount: '6000',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept optional fields as undefined', () => {
+    const result = contributionFormSchema.safeParse({
+      ...validDollarContribution,
+      maxBalance: undefined,
+      employerMatch: undefined,
+      incomeId: undefined,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should accept optional maxBalance when provided', () => {
+    const result = contributionFormSchema.safeParse({
+      ...validDollarContribution,
+      maxBalance: 50000,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject maxBalance of 0', () => {
+    const result = contributionFormSchema.safeParse({
+      ...validDollarContribution,
+      maxBalance: 0,
+    });
+    expect(result.success).toBe(false);
   });
 });

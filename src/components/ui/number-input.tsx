@@ -52,11 +52,7 @@ export default function NumberInput<
     disabled,
   });
 
-  const handleValueChange = (values: NumberFormatValues) => {
-    const value = values.value;
-    onChange(value !== '' ? value : undefined);
-  };
-
+  const handleValueChange = (values: NumberFormatValues) => onChange(values.value);
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (step === undefined || min === undefined || max === undefined) return;
 
