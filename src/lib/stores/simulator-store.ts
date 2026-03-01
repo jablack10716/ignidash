@@ -40,6 +40,14 @@ import type {
   MultiSimulationChartData,
 } from '@/lib/types/chart-data-points';
 import { SingleSimulationCategory, MultiSimulationCategory } from '@/lib/types/simulation-category';
+import type {
+  NetWorthDataView,
+  CashFlowDataView,
+  TaxesDataView,
+  ReturnsDataView,
+  ContributionsDataView,
+  WithdrawalsDataView,
+} from '@/lib/types/chart-data-views';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { usePrevious } from '@/hooks/use-previous';
 
@@ -68,6 +76,17 @@ export type QuickSelectPercentile = 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null
 export type SimulationStatus = 'none' | 'loading';
 export type ChartTimeFrame = 'tenYears' | 'twentyYears' | 'thirtyYears' | 'fullPlan';
 
+interface DataViews {
+  netWorth: { dataView: NetWorthDataView; customDataID: string };
+  cashFlow: { dataView: CashFlowDataView; customDataID: string };
+  taxes: { dataView: TaxesDataView };
+  returns: { dataView: ReturnsDataView; customDataID: string };
+  contributions: { dataView: ContributionsDataView; customDataID: string };
+  withdrawals: { dataView: WithdrawalsDataView; customDataID: string };
+}
+
+export type DataViewCategory = keyof DataViews;
+
 interface SimulatorState {
   numbers: {
     hasOpenedTaxSettings: Record<Id<'plans'>, boolean>;
@@ -84,6 +103,7 @@ interface SimulatorState {
     monteCarloTimeFrameToShow: ChartTimeFrame;
     cachedKeyMetrics: KeyMetrics | null;
     cachedSimulationResult: ConvexSimulationResult | null;
+    dataViews: DataViews;
   };
 
   preferences: {
@@ -121,6 +141,7 @@ interface SimulatorState {
     updateMonteCarloTimeFrameToShow: (value: ChartTimeFrame) => void;
     updateCachedKeyMetrics: (metrics: KeyMetrics | null) => void;
     updateCachedSimulationResult: (result: ConvexSimulationResult | null) => void;
+    updateDataView: <K extends DataViewCategory>(category: K, update: Partial<DataViews[K]>) => void;
 
     /* Preferences */
     updateShowReferenceLines: (value: boolean) => void;
@@ -158,6 +179,14 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
     monteCarloTimeFrameToShow: 'fullPlan',
     cachedKeyMetrics: null,
     cachedSimulationResult: null,
+    dataViews: {
+      netWorth: { dataView: 'taxCategory', customDataID: '' },
+      cashFlow: { dataView: 'surplusDeficit', customDataID: '' },
+      taxes: { dataView: 'annualAmounts' },
+      returns: { dataView: 'rates', customDataID: '' },
+      contributions: { dataView: 'taxCategory', customDataID: '' },
+      withdrawals: { dataView: 'taxCategory', customDataID: '' },
+    },
   },
   preferences: {
     showReferenceLines: true,
@@ -233,6 +262,10 @@ export const useSimulatorStore = create<SimulatorState>()(
           updateCachedSimulationResult: (result) =>
             set((state) => {
               state.results.cachedSimulationResult = result;
+            }),
+          updateDataView: (category, update) =>
+            set((state) => {
+              Object.assign(state.results.dataViews[category], update);
             }),
           updateShowReferenceLines: (value) =>
             set((state) => {
@@ -311,6 +344,7 @@ export const useSelectedConversationId = (planId: Id<'plans'>) => useSimulatorSt
 export const useIncludeSimData = () => useSimulatorStore((state) => state.chat.includeSimData);
 export const useInsightsSelectedPlan = () => useSimulatorStore((state) => state.insights.selectedPlan);
 export const useShowAIChatPulse = () => useSimulatorStore((state) => state.nux.showAIChatPulse);
+export const useDataView = <K extends DataViewCategory>(category: K) => useSimulatorStore((state) => state.results.dataViews[category]);
 
 /**
  * Action selectors
@@ -337,6 +371,7 @@ export const useClearSelectedConversationId = () => useSimulatorStore((state) =>
 export const useUpdateIncludeSimData = () => useSimulatorStore((state) => state.actions.updateIncludeSimData);
 export const useUpdateInsightsSelectedPlan = () => useSimulatorStore((state) => state.actions.updateInsightsSelectedPlan);
 export const useUpdateShowAIChatPulse = () => useSimulatorStore((state) => state.actions.updateShowAIChatPulse);
+export const useUpdateDataView = () => useSimulatorStore((state) => state.actions.updateDataView);
 
 /**
  * Preferences selectors

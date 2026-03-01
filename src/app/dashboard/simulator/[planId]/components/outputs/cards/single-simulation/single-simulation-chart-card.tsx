@@ -3,14 +3,6 @@
 import { useState } from 'react';
 
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import type {
-  NetWorthDataView,
-  CashFlowDataView,
-  TaxesDataView,
-  ReturnsDataView,
-  ContributionsDataView,
-  WithdrawalsDataView,
-} from '@/lib/types/chart-data-views';
 import type { TaxableIncomeReferenceLineMode, AgiReferenceLineMode } from '@/lib/types/reference-line-modes';
 import { TAXABLE_INCOME_REFERENCE_LINE_MODES, AGI_REFERENCE_LINE_MODES } from '@/lib/types/reference-line-modes';
 import {
@@ -21,6 +13,8 @@ import {
   useSingleSimulationContributionsChartData,
   useSingleSimulationWithdrawalsChartData,
   useSingleSimulationCategory,
+  useDataView,
+  useUpdateDataView,
 } from '@/lib/stores/simulator-store';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import { SingleSimulationCategory } from '@/lib/types/simulation-category';
@@ -49,8 +43,10 @@ interface ChartsCategoryProps {
 function NetWorthCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationNetWorthChartData(simulation);
 
-  const [dataView, setDataView] = useState<NetWorthDataView>('taxCategory');
-  const [customDataID, setCustomDataID] = useState<string>('');
+  const { dataView, customDataID } = useDataView('netWorth');
+  const updateDataView = useUpdateDataView();
+  const setDataView = (view: typeof dataView) => updateDataView('netWorth', { dataView: view });
+  const setCustomDataID = (id: string) => updateDataView('netWorth', { customDataID: id });
 
   return (
     <>
@@ -78,8 +74,10 @@ function NetWorthCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, star
 function CashFlowCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationCashFlowChartData(simulation);
 
-  const [dataView, setDataView] = useState<CashFlowDataView>('surplusDeficit');
-  const [customDataID, setCustomDataID] = useState<string>('');
+  const { dataView, customDataID } = useDataView('cashFlow');
+  const updateDataView = useUpdateDataView();
+  const setDataView = (view: typeof dataView) => updateDataView('cashFlow', { dataView: view });
+  const setCustomDataID = (id: string) => updateDataView('cashFlow', { customDataID: id });
 
   return (
     <>
@@ -107,7 +105,9 @@ function CashFlowCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, star
 function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationTaxesChartData(simulation);
 
-  const [dataView, setDataView] = useState<TaxesDataView>('annualAmounts');
+  const { dataView } = useDataView('taxes');
+  const updateDataView = useUpdateDataView();
+  const setDataView = (view: typeof dataView) => updateDataView('taxes', { dataView: view });
 
   const [referenceLineMode, setReferenceLineMode] = useState<TaxableIncomeReferenceLineMode>(TAXABLE_INCOME_REFERENCE_LINE_MODES[0]);
 
@@ -142,8 +142,10 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
 function ReturnsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationReturnsChartData(simulation);
 
-  const [dataView, setDataView] = useState<ReturnsDataView>('rates');
-  const [customDataID, setCustomDataID] = useState<string>('');
+  const { dataView, customDataID } = useDataView('returns');
+  const updateDataView = useUpdateDataView();
+  const setDataView = (view: typeof dataView) => updateDataView('returns', { dataView: view });
+  const setCustomDataID = (id: string) => updateDataView('returns', { customDataID: id });
 
   return (
     <>
@@ -171,8 +173,10 @@ function ReturnsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, start
 function ContributionsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationContributionsChartData(simulation);
 
-  const [dataView, setDataView] = useState<ContributionsDataView>('taxCategory');
-  const [customDataID, setCustomDataID] = useState<string>('');
+  const { dataView, customDataID } = useDataView('contributions');
+  const updateDataView = useUpdateDataView();
+  const setDataView = (view: typeof dataView) => updateDataView('contributions', { dataView: view });
+  const setCustomDataID = (id: string) => updateDataView('contributions', { customDataID: id });
 
   return (
     <>
@@ -200,8 +204,10 @@ function ContributionsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge,
 function WithdrawalsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationWithdrawalsChartData(simulation);
 
-  const [dataView, setDataView] = useState<WithdrawalsDataView>('taxCategory');
-  const [customDataID, setCustomDataID] = useState<string>('');
+  const { dataView, customDataID } = useDataView('withdrawals');
+  const updateDataView = useUpdateDataView();
+  const setDataView = (view: typeof dataView) => updateDataView('withdrawals', { dataView: view });
+  const setCustomDataID = (id: string) => updateDataView('withdrawals', { customDataID: id });
 
   return (
     <>
