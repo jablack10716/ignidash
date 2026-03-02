@@ -2,7 +2,6 @@
 
 import { BarChart, ResponsiveContainer } from 'recharts';
 
-import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { MultiSimulationPhasesChartDataPoint } from '@/lib/types/chart-data-points';
@@ -26,7 +25,7 @@ export default function MultiSimulationPhasesBarChart({ age, rawChartData }: Mul
   const { foregroundMutedColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
-  const formatter = (value: number) => formatNumber(value, 0);
+  const formatter = (value: number) => value.toFixed(0);
   const chartData: { name: string; amount: number; color: string }[] = rawChartData
     .filter((item) => item.age === age)
     .flatMap(({ numberAccumulation, numberRetirement, numberBankrupt }) => [
@@ -48,7 +47,7 @@ export default function MultiSimulationPhasesBarChart({ age, rawChartData }: Mul
           <ChartGrid />
           <BarChartXAxis tick={tick} />
           <BarChartYAxis formatter={formatter} />
-          <StandardBar data={chartData} formatValue={(v: number) => formatNumber(v, 0)} />
+          <StandardBar data={chartData} formatValue={(v: number) => v.toFixed(0)} />
         </BarChart>
       </ResponsiveContainer>
     </BarChartContainer>

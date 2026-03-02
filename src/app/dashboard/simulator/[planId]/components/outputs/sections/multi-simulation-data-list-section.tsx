@@ -3,8 +3,7 @@
 import { memo } from 'react';
 
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
-import { formatNumber } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import Card from '@/components/ui/card';
 import { MultiSimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';
@@ -49,12 +48,12 @@ function PhasesDataListCardV2({ chartData, selectedAge }: DataListCardProps) {
 
   const formattedMeanRetirementAge =
     data.meanRetirementAge !== -1 && data.meanYearsToRetirement !== -1
-      ? `${formatNumber(data.meanRetirementAge, 0)} (in ${formatNumber(data.meanYearsToRetirement, 0)} years)`
+      ? `${data.meanRetirementAge.toFixed(0)} (in ${data.meanYearsToRetirement.toFixed(0)} years)`
       : '∞ (never retires)';
 
   const formattedMeanBankruptcyAge =
     data.meanBankruptcyAge !== -1 && data.meanYearsToBankruptcy !== -1
-      ? `${formatNumber(data.meanBankruptcyAge, 0)} (in ${formatNumber(data.meanYearsToBankruptcy, 0)} years)`
+      ? `${data.meanBankruptcyAge.toFixed(0)} (in ${data.meanYearsToBankruptcy.toFixed(0)} years)`
       : '∞ (never goes bankrupt)';
 
   return (
@@ -64,13 +63,13 @@ function PhasesDataListCardV2({ chartData, selectedAge }: DataListCardProps) {
       </Subheading>
       <DescriptionList>
         <DescriptionTerm>Chance of Retirement</DescriptionTerm>
-        <DescriptionDetails>{`${formatNumber(data.chanceOfRetirement * 100, 1)}%`}</DescriptionDetails>
+        <DescriptionDetails>{formatPercentage(data.chanceOfRetirement)}</DescriptionDetails>
 
         <DescriptionTerm>Mean Retirement Age</DescriptionTerm>
         <DescriptionDetails>{formattedMeanRetirementAge}</DescriptionDetails>
 
         <DescriptionTerm>Chance of Bankruptcy</DescriptionTerm>
-        <DescriptionDetails>{`${formatNumber(data.chanceOfBankruptcy * 100, 1)}%`}</DescriptionDetails>
+        <DescriptionDetails>{formatPercentage(data.chanceOfBankruptcy)}</DescriptionDetails>
 
         <DescriptionTerm>Mean Bankruptcy Age</DescriptionTerm>
         <DescriptionDetails>{formattedMeanBankruptcyAge}</DescriptionDetails>

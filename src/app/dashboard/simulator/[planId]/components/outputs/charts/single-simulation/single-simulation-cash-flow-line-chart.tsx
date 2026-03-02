@@ -4,7 +4,7 @@ import { useState, useCallback, memo } from 'react';
 import { ComposedChart, Tooltip } from 'recharts';
 import { ChartLineIcon } from 'lucide-react';
 
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';
@@ -56,7 +56,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   if (!(active && payload && payload.length) || disabled) return null;
 
   const formatValue = (value: number) => {
-    return dataView === 'savingsRate' ? `${(value * 100).toFixed(1)}%` : formatCompactCurrency(value, 1);
+    return dataView === 'savingsRate' ? formatPercentage(value) : formatCompactCurrency(value, 1);
   };
 
   const transformedPayload = payload.filter((entry) => entry.color !== LINE_COLOR);
@@ -320,7 +320,7 @@ export default function SingleSimulationCashFlowLineChart({
       break;
     }
     case 'savingsRate': {
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
 
       lineDataKeys.push('savingsRate');
       strokeColors.push('var(--chart-3)');

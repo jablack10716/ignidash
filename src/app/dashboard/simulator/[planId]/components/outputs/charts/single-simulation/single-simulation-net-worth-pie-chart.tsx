@@ -3,7 +3,7 @@
 import { Pie, PieChart, Sector, SectorProps, Cell } from 'recharts';
 
 import { formatChartString } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 
 import { ChartEmptyState, TimeSeriesChartContainer } from '../chart-primitives';
 
@@ -52,7 +52,7 @@ const renderActiveShape = (props: unknown) => {
         {formatChartString(payload?.name ?? 'N/A')}
       </text>
       <text x={cx} y={cy} dy={20} textAnchor="middle" fill="var(--muted-foreground)" fontSize="14">
-        {`${((percent ?? 1) * 100).toFixed(1)}%`}
+        {formatPercentage(percent ?? 1)}
       </text>
       <Sector cx={cx} cy={cy} innerRadius={innerRadius} outerRadius={outerRadius} startAngle={startAngle} endAngle={endAngle} fill={fill} />
       <Sector

@@ -5,8 +5,8 @@ import { Fragment } from 'react';
 import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
 import type { NetWorthDataView } from '@/lib/types/chart-data-views';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
-import { formatChartString, formatNumber } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatChartString } from '@/lib/utils';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import { useAccountData, usePhysicalAssetData, useDebtData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 import { zeroAssetAmounts, type AssetAllocation } from '@/lib/calc/asset';
@@ -207,7 +207,7 @@ export default function SingleSimulationNetWorthPieChartCard({
                 {chartData.map(({ name, value }) => (
                   <Fragment key={name}>
                     <DescriptionTerm>{formatChartString(name)}</DescriptionTerm>
-                    <DescriptionDetails>{`${formatCompactCurrency(value, 2)} (${formatNumber((value / totalAbsoluteValue) * 100, 1)}%)`}</DescriptionDetails>
+                    <DescriptionDetails>{`${formatCompactCurrency(value, 2)} (${formatPercentage(value / totalAbsoluteValue)})`}</DescriptionDetails>
                   </Fragment>
                 ))}
                 <DescriptionTerm className="font-bold">{nameForTotalValue}</DescriptionTerm>

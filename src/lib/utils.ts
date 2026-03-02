@@ -5,17 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatNumber(num: number, fractionDigits: number = 2): string {
-  const absNum = Math.abs(num);
-  const sign = num < 0 ? '-' : '';
-
-  if (absNum >= 1000000000) return sign + (absNum / 1000000000).toFixed(2) + 'B';
-  if (absNum >= 1000000) return sign + (absNum / 1000000).toFixed(2) + 'M';
-  if (absNum >= 1000) return sign + (absNum / 1000).toFixed(1) + 'k';
-
-  return sign + absNum.toFixed(fractionDigits);
-}
-
 export function formatChartString(input: string): string {
   const withSpaces = input.replace(/(?<!^)([A-Z])/g, ' $1');
   let result = withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);

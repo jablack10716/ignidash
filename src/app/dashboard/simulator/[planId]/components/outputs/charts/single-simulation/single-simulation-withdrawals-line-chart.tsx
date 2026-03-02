@@ -3,7 +3,7 @@
 import { useState, useCallback, memo } from 'react';
 import { ComposedChart, Tooltip } from 'recharts';
 
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';
@@ -53,7 +53,7 @@ interface CustomTooltipProps {
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
-  const formatValue = (value: number) => (dataView === 'withdrawalRate' ? `${(value * 100).toFixed(1)}%` : formatCompactCurrency(value, 1));
+  const formatValue = (value: number) => (dataView === 'withdrawalRate' ? formatPercentage(value) : formatCompactCurrency(value, 1));
   let footer = null;
   switch (dataView) {
     case 'annualAmounts':
@@ -207,7 +207,7 @@ export default function SingleSimulationWithdrawalsLineChart({
       barColors.push('var(--chart-2)', 'var(--chart-4)');
       break;
     case 'withdrawalRate':
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
 
       lineDataKeys.push('withdrawalRate');
       strokeColors.push('var(--chart-2)');

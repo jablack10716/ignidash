@@ -10,8 +10,8 @@ import type { NetWorthDataView } from '@/lib/types/chart-data-views';
 import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { DebtData } from '@/lib/calc/debts';
-import { formatNumber, formatChartString } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatChartString } from '@/lib/utils';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';
@@ -143,7 +143,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
               key={entry.dataKey}
               dataKey={entry.dataKey}
               color={entry.color}
-              formattedValue={`${formatCompactCurrency(entry.value, 1)}${total > 0 ? ` (${formatNumber((entry.value / total) * 100, 1)}%)` : ''}`}
+              formattedValue={`${formatCompactCurrency(entry.value, 1)}${total > 0 ? ` (${formatPercentage(entry.value / total)})` : ''}`}
             />
           ))}
         </div>

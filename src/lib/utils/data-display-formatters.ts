@@ -5,8 +5,7 @@
  * into user-facing display strings for cards, lists, and summary panels.
  */
 
-import { formatNumber } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import type { TimePoint, Growth, Frequency } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 import type { IncomeType } from '@/lib/schemas/inputs/income-form-schema';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -76,7 +75,7 @@ export const physicalAssetTimeFrameForDisplay = (startTimePoint: TimePoint, endT
 export const growthForDisplay = (growthRate: Growth['growthRate'], growthLimit: Growth['growthLimit']) => {
   if (growthRate === undefined) return 'No Growth';
 
-  const rate = formatNumber(growthRate, 1);
+  const rate = Number(growthRate).toFixed(1);
   if (growthLimit === undefined) return `Rate: ${rate}%, No Limit`;
 
   return `Rate: ${rate}%, Limit: ${formatCompactCurrency(growthLimit, 0)}`;
@@ -119,7 +118,7 @@ export const incomeTaxTreatmentForDisplay = (type: IncomeType, withholding: numb
     return typeLabel;
   }
 
-  return `${typeLabel}, ${formatNumber(withholding, 0)}% Withheld`;
+  return `${typeLabel}, ${Number(withholding).toFixed(0)}% Withheld`;
 };
 
 export const keyMetricsForDisplay = (keyMetrics: KeyMetrics) => {
@@ -137,15 +136,15 @@ export const keyMetricsForDisplay = (keyMetrics: KeyMetrics) => {
 
   const formatters = {
     success: (v: number) =>
-      keyMetrics.type === 'multi' ? `${formatNumber(v * 100, 1)}%` : v >= 0.99 ? 'Yes!' : v <= 0.01 ? 'No' : `${formatNumber(v * 100, 1)}%`,
-    retirementAge: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
-    yearsToRetirement: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
-    bankruptcyAge: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
-    yearsToBankruptcy: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
+      keyMetrics.type === 'multi' ? formatPercentage(v) : v >= 0.99 ? 'Yes!' : v <= 0.01 ? 'No' : formatPercentage(v),
+    retirementAge: (v: number | null) => (v !== null ? v.toFixed(0) : '∞'),
+    yearsToRetirement: (v: number | null) => (v !== null ? v.toFixed(0) : '∞'),
+    bankruptcyAge: (v: number | null) => (v !== null ? v.toFixed(0) : '∞'),
+    yearsToBankruptcy: (v: number | null) => (v !== null ? v.toFixed(0) : '∞'),
     portfolioAtRetirement: (v: number | null) => (v !== null ? `${formatCompactCurrency(v, 2)}` : 'N/A'),
     lifetimeTaxesAndPenalties: (v: number) => `${formatCompactCurrency(v, 2)}`,
     finalPortfolio: (v: number) => `${formatCompactCurrency(v, 2)}`,
-    progressToRetirement: (v: number | null) => (v !== null ? `${formatNumber(v * 100, 1)}%` : 'N/A'),
+    progressToRetirement: (v: number | null) => (v !== null ? formatPercentage(v) : 'N/A'),
   };
 
   return {

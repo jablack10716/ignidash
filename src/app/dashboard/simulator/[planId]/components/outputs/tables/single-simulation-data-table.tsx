@@ -4,8 +4,8 @@ import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import type {
   SingleSimulationNetWorthTableRow,
   SingleSimulationCashFlowTableRow,
-  SingleSimulationReturnsTableRow,
   SingleSimulationTaxesTableRow,
+  SingleSimulationReturnsTableRow,
   SingleSimulationContributionsTableRow,
   SingleSimulationWithdrawalsTableRow,
 } from '@/lib/schemas/tables/single-simulation-table-schema';
@@ -13,8 +13,8 @@ import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 import {
   useSingleSimulationNetWorthTableData,
   useSingleSimulationCashFlowTableData,
-  useSingleSimulationReturnsTableData,
   useSingleSimulationTaxesTableData,
+  useSingleSimulationReturnsTableData,
   useSingleSimulationContributionsTableData,
   useSingleSimulationWithdrawalsTableData,
   useSingleSimulationCategory,
@@ -22,13 +22,20 @@ import {
 import {
   generateNetWorthTableColumns,
   generateCashFlowTableColumns,
-  generateReturnsTableColumns,
   generateTaxesTableColumns,
+  generateReturnsTableColumns,
   generateContributionsTableColumns,
   generateWithdrawalsTableColumns,
 } from '@/lib/utils/table-formatters';
 
 import Table from './table';
+
+const netWorthColumns = generateNetWorthTableColumns();
+const cashFlowColumns = generateCashFlowTableColumns();
+const taxesColumns = generateTaxesTableColumns();
+const returnsColumns = generateReturnsTableColumns();
+const contributionsColumns = generateContributionsTableColumns();
+const withdrawalsColumns = generateWithdrawalsTableColumns();
 
 interface TableCategoryProps {
   simulation: SimulationResult;
@@ -39,7 +46,7 @@ function NetWorthTable({ simulation }: TableCategoryProps) {
 
   return (
     <Table<SingleSimulationNetWorthTableRow>
-      columns={generateNetWorthTableColumns()}
+      columns={netWorthColumns}
       data={tableData}
       keyField="year"
       exportFilename="net-worth-data.csv"
@@ -52,7 +59,7 @@ function CashFlowTable({ simulation }: TableCategoryProps) {
 
   return (
     <Table<SingleSimulationCashFlowTableRow>
-      columns={generateCashFlowTableColumns()}
+      columns={cashFlowColumns}
       data={tableData}
       keyField="year"
       exportFilename="cash-flow-data.csv"
@@ -60,29 +67,17 @@ function CashFlowTable({ simulation }: TableCategoryProps) {
   );
 }
 
+function TaxesTable({ simulation }: TableCategoryProps) {
+  const tableData = useSingleSimulationTaxesTableData(simulation);
+
+  return <Table<SingleSimulationTaxesTableRow> columns={taxesColumns} data={tableData} keyField="year" exportFilename="taxes-data.csv" />;
+}
+
 function ReturnsTable({ simulation }: TableCategoryProps) {
   const tableData = useSingleSimulationReturnsTableData(simulation);
 
   return (
-    <Table<SingleSimulationReturnsTableRow>
-      columns={generateReturnsTableColumns()}
-      data={tableData}
-      keyField="year"
-      exportFilename="returns-data.csv"
-    />
-  );
-}
-
-function TaxesTable({ simulation }: TableCategoryProps) {
-  const tableData = useSingleSimulationTaxesTableData(simulation);
-
-  return (
-    <Table<SingleSimulationTaxesTableRow>
-      columns={generateTaxesTableColumns()}
-      data={tableData}
-      keyField="year"
-      exportFilename="taxes-data.csv"
-    />
+    <Table<SingleSimulationReturnsTableRow> columns={returnsColumns} data={tableData} keyField="year" exportFilename="returns-data.csv" />
   );
 }
 
@@ -91,7 +86,7 @@ function ContributionsTable({ simulation }: TableCategoryProps) {
 
   return (
     <Table<SingleSimulationContributionsTableRow>
-      columns={generateContributionsTableColumns()}
+      columns={contributionsColumns}
       data={tableData}
       keyField="year"
       exportFilename="contributions-data.csv"
@@ -104,7 +99,7 @@ function WithdrawalsTable({ simulation }: TableCategoryProps) {
 
   return (
     <Table<SingleSimulationWithdrawalsTableRow>
-      columns={generateWithdrawalsTableColumns()}
+      columns={withdrawalsColumns}
       data={tableData}
       keyField="year"
       exportFilename="withdrawals-data.csv"
@@ -126,10 +121,10 @@ export default function SingleSimulationDataTable({ simulation }: SingleSimulati
       return <NetWorthTable {...props} />;
     case SingleSimulationCategory.CashFlow:
       return <CashFlowTable {...props} />;
-    case SingleSimulationCategory.Returns:
-      return <ReturnsTable {...props} />;
     case SingleSimulationCategory.Taxes:
       return <TaxesTable {...props} />;
+    case SingleSimulationCategory.Returns:
+      return <ReturnsTable {...props} />;
     case SingleSimulationCategory.Contributions:
       return <ContributionsTable {...props} />;
     case SingleSimulationCategory.Withdrawals:

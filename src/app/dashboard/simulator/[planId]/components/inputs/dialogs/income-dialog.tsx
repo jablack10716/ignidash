@@ -106,7 +106,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
 
   const taxes = useWatch({ control, name: 'taxes' });
   const incomeType = taxes.incomeType;
-  const withholding = taxes.withholding as number | undefined;
+  const withholding = taxes.withholding !== undefined ? Number(taxes.withholding) : undefined;
 
   useEffect(() => {
     if (frequency === 'oneTime') {

@@ -51,3 +51,22 @@ export function getCurrencySymbol(): string {
 export function formatCurrencyPlaceholder(amount: number): string {
   return currencyFormatter.format(amount);
 }
+
+const percentageFormatters = new Map<number, Intl.NumberFormat>();
+
+function getPercentageFormatter(fractionDigits: number): Intl.NumberFormat {
+  let formatter = percentageFormatters.get(fractionDigits);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(CURRENCY_CONFIG.locale, {
+      style: 'percent',
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    });
+    percentageFormatters.set(fractionDigits, formatter);
+  }
+  return formatter;
+}
+
+export function formatPercentage(value: number, fractionDigits: number = 1): string {
+  return getPercentageFormatter(fractionDigits).format(value);
+}

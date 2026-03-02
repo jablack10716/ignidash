@@ -511,7 +511,7 @@ type FilingStatus =
    - And 5 others with hardcoded `$` prefix
 
 10. **All 26+ chart components:**
-    - `src/app/dashboard/simulator/[planId]/components/outputs/charts/` - All use `formatNumber(value, decimals, '$')`
+    - `src/app/dashboard/simulator/[planId]/components/outputs/charts/`
 
 ---
 

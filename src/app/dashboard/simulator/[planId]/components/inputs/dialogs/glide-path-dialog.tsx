@@ -11,7 +11,7 @@ import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
-import { formatNumber } from '@/lib/utils';
+import { formatPercentage } from '@/lib/utils/currency-formatters';
 import { glidePathToConvex } from '@/lib/utils/data-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
@@ -273,7 +273,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                 />
                 {errors.targetBondAllocation && <ErrorMessage>{errors.targetBondAllocation?.message}</ErrorMessage>}
                 <Description>
-                  Your starting portfolio-wide bond allocation is <strong>{formatNumber(currBondAllocation * 100, 1)}%</strong>.
+                  Your starting portfolio-wide bond allocation is <strong>{formatPercentage(currBondAllocation)}</strong>.
                 </Description>
               </Field>
             </FieldGroup>

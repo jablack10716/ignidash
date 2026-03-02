@@ -11,6 +11,9 @@ import TableTypeSelector, { TableType } from '../table-type-selector';
 import Table from '../tables/table';
 import SingleSimulationDataTable from '../tables/single-simulation-data-table';
 
+const multiSimColumns = generateMultiSimulationTableColumns();
+const yearlyAggColumns = generateYearlyAggregateTableColumns();
+
 interface TableWithSelectedSeedProps {
   simulation: SimulationResult;
 }
@@ -44,7 +47,7 @@ function MultiSimulationDataTableSection({
       case TableType.AllSimulations:
         tableComponent = (
           <Table<MultiSimulationTableRow>
-            columns={generateMultiSimulationTableColumns()}
+            columns={multiSimColumns}
             data={tableData}
             keyField="seed"
             onRowClick={(row: MultiSimulationTableRow) => handleSeedFromTableChange(row.seed)}
@@ -55,7 +58,7 @@ function MultiSimulationDataTableSection({
       case TableType.YearlyResults:
         tableComponent = (
           <Table<YearlyAggregateTableRow>
-            columns={generateYearlyAggregateTableColumns()}
+            columns={yearlyAggColumns}
             data={yearlyTableData}
             keyField="year"
             exportFilename="yearly-aggregate-data.csv"

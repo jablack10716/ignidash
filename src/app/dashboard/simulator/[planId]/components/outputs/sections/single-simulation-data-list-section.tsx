@@ -6,8 +6,7 @@ import { InfoIcon } from 'lucide-react';
 import type { SimulationDataPoint, SimulationResult } from '@/lib/calc/simulation-engine';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
-import { formatNumber } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import Card from '@/components/ui/card';
 import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';
@@ -199,9 +198,7 @@ function CashFlowDataListCard({ dp, selectedAge }: DataListCardProps) {
             Savings Rate
             <SavingsRateTooltip />
           </DescriptionTerm>
-          <DescriptionDetails className="font-bold">
-            {savingsRate !== null ? `${formatNumber(savingsRate * 100, 1)}%` : 'N/A'}
-          </DescriptionDetails>
+          <DescriptionDetails className="font-bold">{savingsRate !== null ? formatPercentage(savingsRate) : 'N/A'}</DescriptionDetails>
         </DescriptionList>
       </Card>
     </div>
@@ -262,13 +259,13 @@ function ReturnsDataListCard({ dp, selectedAge }: DataListCardProps) {
       </Subheading>
       <DescriptionList>
         <DescriptionTerm>Stock Holdings</DescriptionTerm>
-        <DescriptionDetails>{`${formatCompactCurrency(totalValue * stocksAllocation, 2)} (${formatNumber(stocksAllocation * 100, 1)}%)`}</DescriptionDetails>
+        <DescriptionDetails>{`${formatCompactCurrency(totalValue * stocksAllocation, 2)} (${formatPercentage(stocksAllocation)})`}</DescriptionDetails>
 
         <DescriptionTerm>Bond Holdings</DescriptionTerm>
-        <DescriptionDetails>{`${formatCompactCurrency(totalValue * bondsAllocation, 2)} (${formatNumber(bondsAllocation * 100, 1)}%)`}</DescriptionDetails>
+        <DescriptionDetails>{`${formatCompactCurrency(totalValue * bondsAllocation, 2)} (${formatPercentage(bondsAllocation)})`}</DescriptionDetails>
 
         <DescriptionTerm>Cash Holdings</DescriptionTerm>
-        <DescriptionDetails>{`${formatCompactCurrency(totalValue * cashAllocation, 2)} (${formatNumber(cashAllocation * 100, 1)}%)`}</DescriptionDetails>
+        <DescriptionDetails>{`${formatCompactCurrency(totalValue * cashAllocation, 2)} (${formatPercentage(cashAllocation)})`}</DescriptionDetails>
 
         <DescriptionTerm className="font-bold">Total Portfolio Value</DescriptionTerm>
         <DescriptionDetails className="font-bold">{formatCompactCurrency(totalValue, 2)}</DescriptionDetails>
@@ -309,9 +306,7 @@ function ContributionsDataListCard({ dp, selectedAge }: DataListCardProps) {
             Savings Rate
             <SavingsRateTooltip />
           </DescriptionTerm>
-          <DescriptionDetails className="font-bold">
-            {savingsRate !== null ? `${formatNumber(savingsRate * 100, 1)}%` : 'N/A'}
-          </DescriptionDetails>
+          <DescriptionDetails className="font-bold">{savingsRate !== null ? formatPercentage(savingsRate) : 'N/A'}</DescriptionDetails>
         </DescriptionList>
       </Card>
     </div>
@@ -350,7 +345,7 @@ function WithdrawalsDataListCard({ dp, selectedAge }: DataListCardProps) {
             Withdrawal Rate <WithdrawalRateTooltip />
           </DescriptionTerm>
           <DescriptionDetails className="font-bold">
-            {withdrawalRate !== null ? `${formatNumber(withdrawalRate * 100, 1)}%` : 'N/A'}
+            {withdrawalRate !== null ? formatPercentage(withdrawalRate) : 'N/A'}
           </DescriptionDetails>
         </DescriptionList>
       </Card>

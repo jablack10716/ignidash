@@ -12,10 +12,10 @@ import {
   SIMULATION_NET_WORTH_TABLE_CONFIG,
   type SingleSimulationCashFlowTableRow,
   SIMULATION_CASH_FLOW_TABLE_CONFIG,
-  type SingleSimulationReturnsTableRow,
-  SIMULATION_RETURNS_TABLE_CONFIG,
   type SingleSimulationTaxesTableRow,
   SIMULATION_TAXES_TABLE_CONFIG,
+  type SingleSimulationReturnsTableRow,
+  SIMULATION_RETURNS_TABLE_CONFIG,
   type SingleSimulationContributionsTableRow,
   SIMULATION_CONTRIBUTIONS_TABLE_CONFIG,
   type SingleSimulationWithdrawalsTableRow,
@@ -27,7 +27,7 @@ import {
   type YearlyAggregateTableRow,
   YEARLY_AGGREGATE_TABLE_CONFIG,
 } from '@/lib/schemas/tables/multi-simulation-table-schema';
-import { formatCurrency } from '@/lib/utils/currency-formatters';
+import { formatCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 
 /** Dispatches a cell value to the appropriate formatter based on the column's ColumnFormat. */
 const formatValue = (value: unknown, format: ColumnFormat): string => {
@@ -38,7 +38,7 @@ const formatValue = (value: unknown, format: ColumnFormat): string => {
     case 'currency':
       return formatCurrency(value as number);
     case 'percentage':
-      return `${((value as number) * 100).toFixed(1)}%`;
+      return formatPercentage(value as number);
     case 'number':
       return String(value);
     case 'string':
@@ -61,67 +61,24 @@ const formatHistoricalRanges = (ranges: Array<{ startYear: number; endYear: numb
     .join(', ');
 };
 
-export const generateNetWorthTableColumns = (): TableColumn<SingleSimulationNetWorthTableRow>[] => {
-  return Object.entries(SIMULATION_NET_WORTH_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof SingleSimulationNetWorthTableRow,
-    title: config.title,
-    format: (value: SingleSimulationNetWorthTableRow[keyof SingleSimulationNetWorthTableRow]) => formatValue(value, config.format),
-  }));
-};
+type TableConfig<T> = Record<keyof T, { title: string; format: ColumnFormat }>;
 
-export const generateCashFlowTableColumns = (): TableColumn<SingleSimulationCashFlowTableRow>[] => {
-  return Object.entries(SIMULATION_CASH_FLOW_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof SingleSimulationCashFlowTableRow,
-    title: config.title,
-    format: (value: SingleSimulationCashFlowTableRow[keyof SingleSimulationCashFlowTableRow]) => formatValue(value, config.format),
+function generateTableColumns<T extends Record<string, unknown>>(config: TableConfig<T>): TableColumn<T>[] {
+  return Object.entries(config).map(([key, { title, format }]) => ({
+    key,
+    title,
+    format: (value: T[keyof T]) => formatValue(value, format),
   }));
-};
+}
 
-export const generateReturnsTableColumns = (): TableColumn<SingleSimulationReturnsTableRow>[] => {
-  return Object.entries(SIMULATION_RETURNS_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof SingleSimulationReturnsTableRow,
-    title: config.title,
-    format: (value: SingleSimulationReturnsTableRow[keyof SingleSimulationReturnsTableRow]) => formatValue(value, config.format),
-  }));
-};
+export const generateNetWorthTableColumns = () => generateTableColumns<SingleSimulationNetWorthTableRow>(SIMULATION_NET_WORTH_TABLE_CONFIG);
+export const generateCashFlowTableColumns = () => generateTableColumns<SingleSimulationCashFlowTableRow>(SIMULATION_CASH_FLOW_TABLE_CONFIG);
+export const generateTaxesTableColumns = () => generateTableColumns<SingleSimulationTaxesTableRow>(SIMULATION_TAXES_TABLE_CONFIG);
+export const generateReturnsTableColumns = () => generateTableColumns<SingleSimulationReturnsTableRow>(SIMULATION_RETURNS_TABLE_CONFIG);
+export const generateContributionsTableColumns = () =>
+  generateTableColumns<SingleSimulationContributionsTableRow>(SIMULATION_CONTRIBUTIONS_TABLE_CONFIG);
+export const generateWithdrawalsTableColumns = () =>
+  generateTableColumns<SingleSimulationWithdrawalsTableRow>(SIMULATION_WITHDRAWALS_TABLE_CONFIG);
 
-export const generateTaxesTableColumns = (): TableColumn<SingleSimulationTaxesTableRow>[] => {
-  return Object.entries(SIMULATION_TAXES_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof SingleSimulationTaxesTableRow,
-    title: config.title,
-    format: (value: SingleSimulationTaxesTableRow[keyof SingleSimulationTaxesTableRow]) => formatValue(value, config.format),
-  }));
-};
-
-export const generateContributionsTableColumns = (): TableColumn<SingleSimulationContributionsTableRow>[] => {
-  return Object.entries(SIMULATION_CONTRIBUTIONS_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof SingleSimulationContributionsTableRow,
-    title: config.title,
-    format: (value: SingleSimulationContributionsTableRow[keyof SingleSimulationContributionsTableRow]) =>
-      formatValue(value, config.format),
-  }));
-};
-
-export const generateWithdrawalsTableColumns = (): TableColumn<SingleSimulationWithdrawalsTableRow>[] => {
-  return Object.entries(SIMULATION_WITHDRAWALS_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof SingleSimulationWithdrawalsTableRow,
-    title: config.title,
-    format: (value: SingleSimulationWithdrawalsTableRow[keyof SingleSimulationWithdrawalsTableRow]) => formatValue(value, config.format),
-  }));
-};
-
-export const generateMultiSimulationTableColumns = (): TableColumn<MultiSimulationTableRow>[] => {
-  return Object.entries(MULTI_SIMULATION_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof MultiSimulationTableRow,
-    title: config.title,
-    format: (value: MultiSimulationTableRow[keyof MultiSimulationTableRow]) => formatValue(value, config.format),
-  }));
-};
-
-export const generateYearlyAggregateTableColumns = (): TableColumn<YearlyAggregateTableRow>[] => {
-  return Object.entries(YEARLY_AGGREGATE_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof YearlyAggregateTableRow,
-    title: config.title,
-    format: (value: YearlyAggregateTableRow[keyof YearlyAggregateTableRow]) => formatValue(value, config.format),
-  }));
-};
+export const generateMultiSimulationTableColumns = () => generateTableColumns<MultiSimulationTableRow>(MULTI_SIMULATION_TABLE_CONFIG);
+export const generateYearlyAggregateTableColumns = () => generateTableColumns<YearlyAggregateTableRow>(YEARLY_AGGREGATE_TABLE_CONFIG);

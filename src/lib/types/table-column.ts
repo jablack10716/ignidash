@@ -5,5 +5,5 @@
 export interface TableColumn<T> {
   key: keyof T;
   title: string;
-  format?: (value: T[keyof T]) => string;
+  format: (value: T[keyof T]) => string;
 }

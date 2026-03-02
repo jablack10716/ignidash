@@ -10,7 +10,6 @@ import { useAccountsData, useAssetData, useLiabilityData, useGlidePathData, useP
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
-import { formatNumber } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import { estimatePayoffMonths, formatPayoffEstimate } from '@/lib/utils/payoff-estimator-utils';
@@ -34,7 +33,7 @@ function getAccountDesc(account: AccountInputs) {
   return (
     <p>
       {formatCompactCurrency(account.balance, 2)} | {accountTypeForDisplay(account.type)}
-      {account.type !== 'savings' && ` | ${account.percentBonds ? `${formatNumber(account.percentBonds, 0)}% Bonds` : 'No Bonds'}`}
+      {account.type !== 'savings' && ` | ${account.percentBonds ? `${account.percentBonds.toFixed(1)}% Bonds` : 'No Bonds'}`}
     </p>
   );
 }

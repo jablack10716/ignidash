@@ -5,7 +5,7 @@ import { ComposedChart, Tooltip } from 'recharts';
 import { ChartLineIcon } from 'lucide-react';
 
 import { formatChartString } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';
@@ -53,7 +53,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       case 'marginalRates':
       case 'effectiveRates':
       case 'socialSecurityTaxablePercentage':
-        return `${(value * 100).toFixed(1)}%`;
+        return formatPercentage(value);
       default:
         return formatCompactCurrency(value, 1);
     }
@@ -203,13 +203,13 @@ export default function SingleSimulationTaxesLineChart({
 
   switch (dataView) {
     case 'marginalRates':
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
 
       lineDataKeys.push('topMarginalFederalIncomeTaxRate', 'topMarginalCapitalGainsTaxRate');
       strokeColors.push('var(--chart-2)', 'var(--chart-4)');
       break;
     case 'effectiveRates':
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
 
       lineDataKeys.push('effectiveFederalIncomeTaxRate', 'effectiveCapitalGainsTaxRate');
       strokeColors.push('var(--chart-2)', 'var(--chart-4)');
@@ -324,7 +324,7 @@ export default function SingleSimulationTaxesLineChart({
       barColors.push('var(--chart-1)', 'var(--chart-2)');
       break;
     case 'socialSecurityTaxablePercentage':
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
 
       lineDataKeys.push('maxTaxablePercentage', 'actualTaxablePercentage');
       strokeColors.push('var(--chart-2)', 'var(--chart-4)');

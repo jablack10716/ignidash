@@ -2,7 +2,7 @@
 
 import { BarChart, ReferenceLine, ResponsiveContainer } from 'recharts';
 
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
@@ -23,7 +23,7 @@ const getReturnsLabelFormatter = (dataView: ReturnsDataView) => {
     switch (dataView) {
       case 'rates':
       case 'cagr':
-        return `${(value * 100).toFixed(1)}%`;
+        return formatPercentage(value);
       case 'annualAmounts':
       case 'cumulativeAmounts':
       case 'taxCategory':
@@ -89,7 +89,7 @@ export default function SingleSimulationReturnsBarChart({
 
   switch (dataView) {
     case 'rates': {
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
 
       const [stockLabel, bondLabel, cashLabel, inflationLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
@@ -101,7 +101,7 @@ export default function SingleSimulationReturnsBarChart({
       break;
     }
     case 'cagr': {
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
 
       const [stockLabel, bondLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [

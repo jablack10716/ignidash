@@ -2,7 +2,7 @@
 
 import { BarChart, Bar, ResponsiveContainer, Cell, ReferenceLine, LabelList } from 'recharts';
 
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { FederalIncomeTaxBracket } from '@/lib/calc/tax-data/federal-income-tax-brackets';
@@ -48,7 +48,7 @@ const renderTaxBracketReferenceLines = (
       stroke={foregroundMutedColor}
       ifOverflow="extendDomain"
       label={{
-        value: `${(bracket.rate * 100).toFixed(0)}% (${formatCompactCurrency(bracket.min, 1)})`,
+        value: `${formatPercentage(bracket.rate, 0)} (${formatCompactCurrency(bracket.min, 1)})`,
         position: index !== visibleBrackets.length - 1 ? 'insideBottomRight' : 'insideTopRight',
         fill: foregroundColor,
         fontWeight: '600',
@@ -68,7 +68,7 @@ const renderNiitThresholdReferenceLine = (niitThreshold: number, foregroundColor
       stroke={foregroundMutedColor}
       ifOverflow="extendDomain"
       label={{
-        value: `${(NIIT_RATE * 100).toFixed(1)}% (${formatCompactCurrency(niitThreshold, 1)})`,
+        value: `${formatPercentage(NIIT_RATE)} (${formatCompactCurrency(niitThreshold, 1)})`,
         position: 'insideTopRight',
         fill: foregroundColor,
         fontWeight: '600',
@@ -83,7 +83,7 @@ const getTaxesLabelFormatter = (dataView: TaxesDataView) => {
       case 'marginalRates':
       case 'effectiveRates':
       case 'socialSecurityTaxablePercentage':
-        return `${(value * 100).toFixed(1)}%`;
+        return formatPercentage(value);
       default:
         return formatCompactCurrency(value, 1);
     }
@@ -181,7 +181,7 @@ export default function SingleSimulationTaxesBarChart({
 
   switch (dataView) {
     case 'marginalRates': {
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
       filterZeroValues = false;
 
       const [incomeTaxLabel, capitalGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
@@ -192,7 +192,7 @@ export default function SingleSimulationTaxesBarChart({
       break;
     }
     case 'effectiveRates': {
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
       filterZeroValues = false;
 
       const [incomeTaxLabel, capitalGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
@@ -353,7 +353,7 @@ export default function SingleSimulationTaxesBarChart({
       break;
     }
     case 'socialSecurityTaxablePercentage': {
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
       filterZeroValues = false;
 
       transformedChartData = chartData.flatMap((item) => [

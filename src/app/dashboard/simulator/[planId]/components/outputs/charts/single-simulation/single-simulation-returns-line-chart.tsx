@@ -5,7 +5,7 @@ import { ComposedChart, Tooltip } from 'recharts';
 import { ChartLineIcon } from 'lucide-react';
 
 import { formatChartString } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';
@@ -63,7 +63,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
     switch (dataView) {
       case 'rates':
       case 'cagr':
-        return `${(value * 100).toFixed(1)}%`;
+        return formatPercentage(value);
       default:
         return formatCompactCurrency(value, 1);
     }
@@ -175,7 +175,7 @@ export default function SingleSimulationReturnsLineChart({
 
   switch (dataView) {
     case 'rates':
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
 
       lineDataKeys.push('realStockReturnRate', 'realBondReturnRate', 'realCashReturnRate', 'inflationRate');
       strokeColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-8)');
@@ -183,7 +183,7 @@ export default function SingleSimulationReturnsLineChart({
       showReferenceLineAtZero = false;
       break;
     case 'cagr':
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      formatter = (value: number) => formatPercentage(value);
 
       lineDataKeys.push('realStockCagr', 'realBondCagr', 'realCashCagr');
       strokeColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');

@@ -5,7 +5,7 @@ import { AreaChart, Tooltip } from 'recharts';
 
 import type { MultiSimulationPhasesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { formatNumber } from '@/lib/utils';
+import { formatPercentage } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';
@@ -44,12 +44,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled }: Cust
     <TooltipContainer label={label!} startAge={startAge}>
       <div className="flex flex-col gap-1">
         {payload.map((entry) => (
-          <TooltipEntryRow
-            key={entry.dataKey}
-            dataKey={entry.dataKey}
-            color={entry.color}
-            formattedValue={`${formatNumber(entry.value * 100, 1)}%`}
-          />
+          <TooltipEntryRow key={entry.dataKey} dataKey={entry.dataKey} color={entry.color} formattedValue={formatPercentage(entry.value)} />
         ))}
       </div>
     </TooltipContainer>
@@ -87,7 +82,7 @@ export default function MultiSimulationPhasesAreaChart({
 
   const chartData: MultiSimulationPhasesChartDataPoint[] = useChartDataSlice(rawChartData, 'monteCarlo');
   const dataKeys: (keyof MultiSimulationPhasesChartDataPoint)[] = ['percentAccumulation', 'percentRetirement', 'percentBankrupt'];
-  const formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+  const formatter = (value: number) => formatPercentage(value);
 
   const interval = useChartInterval(chartData.length);
 

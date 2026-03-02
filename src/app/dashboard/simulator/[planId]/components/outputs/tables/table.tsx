@@ -118,7 +118,7 @@ export default function Table<T extends Record<string, unknown>>({
         columns
           .map((col) => {
             const rawValue = row[col.key];
-            return col.format ? col.format(rawValue) : String(rawValue ?? '');
+            return col.format(rawValue);
           })
           .join('\t')
       )
@@ -137,7 +137,7 @@ export default function Table<T extends Record<string, unknown>>({
         columns
           .map((col) => {
             const rawValue = row[col.key];
-            const formatted = col.format ? col.format(rawValue) : String(rawValue ?? '');
+            const formatted = col.format(rawValue);
             return escapeCSVValue(formatted);
           })
           .join(',')
@@ -285,7 +285,7 @@ export default function Table<T extends Record<string, unknown>>({
                       >
                         {columns.map((col, index) => {
                           const rawValue = row[col.key];
-                          const displayValue = col.format ? col.format(rawValue) : String(rawValue);
+                          const displayValue = col.format(rawValue);
 
                           if (index === 0) {
                             return (
@@ -321,7 +321,7 @@ export default function Table<T extends Record<string, unknown>>({
                       showPagination &&
                       Array.from({ length: emptyRows }).map((_, index) => (
                         <tr key={`empty-${index}`}>
-                          <td colSpan={columns.length + 1} className="py-4 text-sm whitespace-nowrap">
+                          <td colSpan={columns.length} className="py-4 text-sm whitespace-nowrap">
                             &nbsp;
                           </td>
                         </tr>
