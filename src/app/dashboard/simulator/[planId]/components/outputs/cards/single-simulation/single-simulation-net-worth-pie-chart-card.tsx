@@ -6,7 +6,7 @@ import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-d
 import type { NetWorthDataView } from '@/lib/types/chart-data-views';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { formatChartString } from '@/lib/utils';
-import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/number-formatters';
 import { useAccountData, usePhysicalAssetData, useDebtData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 import { zeroAssetAmounts, type AssetAllocation } from '@/lib/calc/asset';

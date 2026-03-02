@@ -4,7 +4,7 @@ import type { ReactNode, Ref } from 'react';
 import { CartesianGrid, XAxis, YAxis, ReferenceLine, Line, Bar, Area, Cell } from 'recharts';
 
 import { formatChartString, cn } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency } from '@/lib/utils/number-formatters';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useIsMobile } from '@/hooks/use-mobile';
 import type { KeyMetrics } from '@/lib/types/key-metrics';

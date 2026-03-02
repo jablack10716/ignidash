@@ -5,7 +5,7 @@
  * into user-facing display strings for cards, lists, and summary panels.
  */
 
-import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/number-formatters';
 import type { TimePoint, Growth, Frequency } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 import type { IncomeType } from '@/lib/schemas/inputs/income-form-schema';
 import type { KeyMetrics } from '@/lib/types/key-metrics';

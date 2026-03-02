@@ -5,7 +5,7 @@ import { ComposedChart, Tooltip } from 'recharts';
 import { ChartLineIcon } from 'lucide-react';
 
 import { formatChartString } from '@/lib/utils';
-import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/number-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';

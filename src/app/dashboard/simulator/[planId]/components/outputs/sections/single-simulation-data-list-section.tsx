@@ -6,7 +6,7 @@ import { InfoIcon } from 'lucide-react';
 import type { SimulationDataPoint, SimulationResult } from '@/lib/calc/simulation-engine';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
-import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/number-formatters';
 import Card from '@/components/ui/card';
 import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';

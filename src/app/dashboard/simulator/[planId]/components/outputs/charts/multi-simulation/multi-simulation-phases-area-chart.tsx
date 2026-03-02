@@ -5,7 +5,7 @@ import { AreaChart, Tooltip } from 'recharts';
 
 import type { MultiSimulationPhasesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatPercentage } from '@/lib/utils/number-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';

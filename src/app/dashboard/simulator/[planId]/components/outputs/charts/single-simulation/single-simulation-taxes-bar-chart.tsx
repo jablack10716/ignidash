@@ -2,7 +2,7 @@
 
 import { BarChart, Bar, ResponsiveContainer, Cell, ReferenceLine, LabelList } from 'recharts';
 
-import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/number-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { FederalIncomeTaxBracket } from '@/lib/calc/tax-data/federal-income-tax-brackets';

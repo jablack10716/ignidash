@@ -22,7 +22,7 @@ import { physicalAssetFormSchema, type PhysicalAssetInputs } from '@/lib/schemas
 import { assetTypeForDisplay, type AssetInputs } from '@/lib/schemas/finances/asset-form-schema';
 import { liabilityTypeForDisplay, type LiabilityInputs } from '@/lib/schemas/finances/liability-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
-import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/data-display-formatters';
+import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/display-formatters';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, Fieldset, FieldGroup, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
@@ -34,7 +34,7 @@ import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Divider } from '@/components/catalyst/divider';
-import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/currency-formatters';
+import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/number-formatters';
 
 import SyncWithNetWorthTrackerSelect from './sync-with-nw-tracker-select';
 import { PayoffEstimate } from './payoff-estimate';

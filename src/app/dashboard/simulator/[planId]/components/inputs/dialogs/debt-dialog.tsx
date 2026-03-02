@@ -21,7 +21,7 @@ import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { debtFormSchema, type DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
 import { liabilityTypeForDisplay, type LiabilityInputs } from '@/lib/schemas/finances/liability-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
-import { timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
+import { timeFrameForDisplay } from '@/lib/utils/display-formatters';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, Fieldset, FieldGroup, Label, ErrorMessage } from '@/components/catalyst/fieldset';
@@ -33,7 +33,7 @@ import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Divider } from '@/components/catalyst/divider';
-import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/currency-formatters';
+import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/number-formatters';
 
 import SyncWithNetWorthTrackerSelect from './sync-with-nw-tracker-select';
 import { PayoffEstimate } from './payoff-estimate';

@@ -3,7 +3,7 @@
 import { Pie, PieChart, Sector, SectorProps, Cell } from 'recharts';
 
 import { formatChartString } from '@/lib/utils';
-import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/number-formatters';
 
 import { ChartEmptyState, TimeSeriesChartContainer } from '../chart-primitives';
 

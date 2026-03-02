@@ -5,7 +5,7 @@ import AppLogo from '@/components/app-logo';
 import { Badge } from '@/components/catalyst/badge';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { Subheading } from '@/components/catalyst/heading';
-import { formatCurrency } from '@/lib/utils/currency-formatters';
+import { formatCurrency } from '@/lib/utils/number-formatters';
 
 interface SubscriptionOverviewProps {
   subscription: Stripe.Subscription;

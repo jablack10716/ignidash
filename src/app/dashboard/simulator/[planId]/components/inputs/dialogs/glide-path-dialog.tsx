@@ -11,7 +11,7 @@ import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
-import { formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatPercentage } from '@/lib/utils/number-formatters';
 import { glidePathToConvex } from '@/lib/utils/data-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';

@@ -3,7 +3,7 @@
 import { useState, useCallback, memo } from 'react';
 import { ComposedChart, Tooltip } from 'recharts';
 
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency } from '@/lib/utils/number-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';

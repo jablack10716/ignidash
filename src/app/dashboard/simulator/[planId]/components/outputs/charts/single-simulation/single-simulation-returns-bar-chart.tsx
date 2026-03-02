@@ -2,7 +2,7 @@
 
 import { BarChart, ReferenceLine, ResponsiveContainer } from 'recharts';
 
-import { formatCompactCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatCompactCurrency, formatPercentage } from '@/lib/utils/number-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';

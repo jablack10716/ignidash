@@ -27,7 +27,7 @@ import {
   type YearlyAggregateTableRow,
   YEARLY_AGGREGATE_TABLE_CONFIG,
 } from '@/lib/schemas/tables/multi-simulation-table-schema';
-import { formatCurrency, formatPercentage } from '@/lib/utils/currency-formatters';
+import { formatCurrency, formatPercentage } from '@/lib/utils/number-formatters';
 
 /** Dispatches a cell value to the appropriate formatter based on the column's ColumnFormat. */
 const formatValue = (value: unknown, format: ColumnFormat): string => {

@@ -6,7 +6,7 @@ import { PartyPopperIcon, UmbrellaIcon, TriangleAlertIcon, BanknoteXIcon, Landma
 import { cn } from '@/lib/utils';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
-import { keyMetricsForDisplay } from '@/lib/utils/data-display-formatters';
+import { keyMetricsForDisplay } from '@/lib/utils/display-formatters';
 import { useUpdateCachedKeyMetrics, useUpdateCachedSimulationResult } from '@/lib/stores/simulator-store';
 import { simulationResultToConvex } from '@/lib/utils/data-transformers';
 

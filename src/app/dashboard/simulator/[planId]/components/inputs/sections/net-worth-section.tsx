@@ -10,8 +10,8 @@ import { useAccountsData, useAssetData, useLiabilityData, useGlidePathData, useP
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
-import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
-import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/data-display-formatters';
+import { formatCompactCurrency } from '@/lib/utils/number-formatters';
+import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/display-formatters';
 import { estimatePayoffMonths, formatPayoffEstimate } from '@/lib/utils/payoff-estimator-utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { accountTypeForDisplay, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatCurrency, formatCompactCurrency, getCurrencySymbol, formatCurrencyPlaceholder } from './currency-formatters';
+import { formatCurrency, formatCompactCurrency, getCurrencySymbol, formatCurrencyPlaceholder } from './number-formatters';
 
 describe('formatCurrency', () => {
   it('should format positive amounts without cents', () => {
