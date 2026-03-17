@@ -81,6 +81,19 @@ export default function ResultsColumnHeader() {
         iconButton={
           <div className="flex items-center gap-x-1">
             <IconButton
+              icon={Undo2Icon}
+              label={
+                <KbdGroup>
+                  <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+                  <span>+</span>
+                  <Kbd>Z</Kbd>
+                </KbdGroup>
+              }
+              onClick={handleUndo}
+              surfaceColor="emphasized"
+              isDisabled={!canUndo}
+            />
+            <IconButton
               icon={WandSparklesIcon}
               iconClassName={cn({ 'animate-pulse': showAIChatPulse })}
               className="text-primary ring-primary"
@@ -95,19 +108,6 @@ export default function ResultsColumnHeader() {
             {!isDisabled && (
               <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
             )}
-            <IconButton
-              icon={Undo2Icon}
-              label={
-                <KbdGroup>
-                  <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-                  <span>+</span>
-                  <Kbd>Z</Kbd>
-                </KbdGroup>
-              }
-              onClick={handleUndo}
-              surfaceColor="emphasized"
-              isDisabled={!canUndo}
-            />
             <IconButton
               icon={SettingsIcon}
               label="Simulation Settings"

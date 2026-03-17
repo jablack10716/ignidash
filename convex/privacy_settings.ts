@@ -3,6 +3,7 @@ import { query, mutation } from './_generated/server';
 
 import { privacySettingsValidator } from './validators/privacy_settings_validator';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
+import { patchPlanWithSnapshot } from './utils/snapshot_utils';
 
 export const get = query({
   args: { planId: v.id('plans') },
@@ -21,6 +22,6 @@ export const update = mutation({
   handler: async (ctx, { planId, privacySettings }) => {
     await getPlanForCurrentUserOrThrow(ctx, planId);
 
-    await ctx.db.patch(planId, { privacySettings });
+    await patchPlanWithSnapshot(ctx, planId, { privacySettings });
   },
 });
