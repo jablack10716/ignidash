@@ -185,3 +185,6 @@ Open http://localhost:3000 in your browser.
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=schelskedevco/ignidash&type=date&legend=bottom-right)](https://www.star-history.com/#schelskedevco/ignidash&type=date&legend=bottom-right)
+
+### Important
+Ensure `.env.local`, `.env`, and `.convex/local/default/config.json` are excluded from version control by adding them to `.gitignore`.

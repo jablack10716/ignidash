@@ -30,6 +30,7 @@ import type * as plan_snapshots from "../plan_snapshots.js";
 import type * as plans from "../plans.js";
 import type * as posthog from "../posthog.js";
 import type * as privacy_settings from "../privacy_settings.js";
+import type * as progress_snapshots from "../progress_snapshots.js";
 import type * as simulation_settings from "../simulation_settings.js";
 import type * as tax_settings from "../tax_settings.js";
 import type * as templates_basic from "../templates/basic.js";
@@ -95,6 +96,7 @@ declare const fullApi: ApiFromModules<{
   plans: typeof plans;
   posthog: typeof posthog;
   privacy_settings: typeof privacy_settings;
+  progress_snapshots: typeof progress_snapshots;
   simulation_settings: typeof simulation_settings;
   tax_settings: typeof tax_settings;
   "templates/basic": typeof templates_basic;
