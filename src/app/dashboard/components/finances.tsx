@@ -140,9 +140,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
   const hasLiabilities = numLiabilities > 0;
 
   const [assetToDelete, setAssetToDelete] = useState<{ id: string; name: string } | null>(null);
-  const [snapshotToDelete, setSnapshotToDelete] = useState<{ id: string; name: string } | null>(null);
   const [snapshotDialogOpen, setSnapshotDialogOpen] = useState(false);
-  const deleteMutation = useMutation((api as any).progress_snapshots.deleteSnapshot);
   const deleteAssetMutation = useMutation(api.finances.deleteAsset);
   const deleteAsset = async (assetId: string) => {
     await deleteAssetMutation({ assetId });
