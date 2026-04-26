@@ -20,6 +20,16 @@ export default defineSchema({
   })
     .index('by_planId', ['planId'])
     .index('by_userId', ['userId']),
+  progressSnapshots: defineTable({
+    userId: v.string(),
+    date: v.string(),
+    netWorth: v.number(),
+    assets: v.optional(v.array(assetValidator)),
+    liabilities: v.optional(v.array(liabilityValidator)),
+    note: v.optional(v.string()),
+  })
+    .index('by_userId', ['userId'])
+    .index('by_userId_date', ['userId', 'date']),
   finances: defineTable({
     userId: v.string(),
     assets: v.array(assetValidator),
