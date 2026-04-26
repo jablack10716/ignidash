@@ -1,31 +1,30 @@
 'use node';
 
 import { ConvexError } from 'convex/values';
-import { AzureOpenAI } from 'openai';
+import { APIError, OpenAI } from 'openai';
 import { internalAction } from './_generated/server';
 import type { Id, Doc } from './_generated/dataModel';
 import { internal } from './_generated/api';
 
 import type { SubscriptionType } from './utils/ai_utils';
 
-let openaiChat: AzureOpenAI | null = null;
-let openaiInsights: AzureOpenAI | null = null;
+let openaiChat: OpenAI | null = null;
+let openaiInsights: OpenAI | null = null;
+
+const CHAT_MODEL = 'grok-4-fast';
+const INSIGHTS_MODEL = 'grok-4-fast';
 
 const apiKey = process.env.OPENAI_API_KEY;
 const endpoint = process.env.OPENAI_ENDPOINT;
 if (apiKey && endpoint) {
-  openaiChat = new AzureOpenAI({
-    endpoint,
+  openaiChat = new OpenAI({
     apiKey,
-    deployment: 'gpt-5.2-chat',
-    apiVersion: '2024-04-01-preview',
+    baseURL: endpoint,
   });
 
-  openaiInsights = new AzureOpenAI({
-    endpoint,
+  openaiInsights = new OpenAI({
     apiKey,
-    deployment: 'gpt-5.2',
-    apiVersion: '2024-12-01-preview',
+    baseURL: endpoint,
   });
 }
 
@@ -55,7 +54,7 @@ export const streamChat = internalAction({
 
     try {
       const stream = await openaiChat.chat.completions.create({
-        model: 'gpt-5.2-chat',
+        model: CHAT_MODEL,
         messages: [
           { role: 'system', content: systemPrompt },
           ...messages.filter(hasBody).map((msg) => ({ role: msg.author, content: msg.body })),
@@ -102,7 +101,7 @@ export const streamChat = internalAction({
 
       await ctx.runMutation(internal.messages.setBody, { messageId: assistantMessageId, body, isLoading: false });
     } catch (error) {
-      if (error instanceof AzureOpenAI.APIError) {
+      if (error instanceof APIError) {
         console.error(error);
 
         const body = `An unexpected error occurred: ${error.message}.`;
@@ -137,7 +136,7 @@ export const streamInsights = internalAction({
 
     try {
       const stream = await openaiInsights.chat.completions.create({
-        model: 'gpt-5.2',
+        model: INSIGHTS_MODEL,
         messages: [{ role: 'system', content: systemPrompt }],
         stream: true,
         stream_options: { include_usage: true },
@@ -181,7 +180,7 @@ export const streamInsights = internalAction({
 
       await ctx.runMutation(internal.insights.setContent, { insightId, content, isLoading: false });
     } catch (error) {
-      if (error instanceof AzureOpenAI.APIError) {
+      if (error instanceof APIError) {
         console.error(error);
 
         const content = `An unexpected error occurred: ${error.message}.`;
