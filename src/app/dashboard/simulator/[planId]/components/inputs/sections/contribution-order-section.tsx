@@ -54,6 +54,9 @@ function getContributionRuleDesc(accounts: Record<string, AccountInputs>, contri
     case 'percentRemaining':
       description = `${contributionInputs.percentRemaining}% remaining`;
       break;
+    case 'percentOfIncome':
+      description = `${contributionInputs.percentOfIncome}% of income`;
+      break;
     case 'unlimited':
       description = 'Unlimited';
       break;

@@ -299,15 +299,23 @@ export class PortfolioProcessor {
       const contributedAssets = contributeToAccount.applyContribution(contributionAmount, 'self', contributionAllocation);
       byAccount[contributeToAccountID] = addFlows(byAccount[contributeToAccountID] ?? zeroFlows(), contributedAssets);
 
+      const matchDestinationID = rule.getEmployerMatchAccountID() || contributeToAccountID;
+      const matchDestinationAccount = this.simulationState.portfolio.getAccountById(matchDestinationID) || contributeToAccount;
+
       if (employerMatchAmount > 0) {
-        const matchedAssets = contributeToAccount.applyContribution(employerMatchAmount, 'employer', contributionAllocation);
-        byAccount[contributeToAccountID] = addFlows(byAccount[contributeToAccountID], matchedAssets);
+        const matchedAssets = matchDestinationAccount.applyContribution(employerMatchAmount, 'employer', contributionAllocation);
+        byAccount[matchDestinationID] = addFlows(byAccount[matchDestinationID] ?? zeroFlows(), matchedAssets);
       }
 
-      employerMatchByAccount[contributeToAccountID] = (employerMatchByAccount[contributeToAccountID] ?? 0) + employerMatchAmount;
+      employerMatchByAccount[matchDestinationID] = (employerMatchByAccount[matchDestinationID] ?? 0) + employerMatchAmount;
       employerMatch += employerMatchAmount;
 
-      rule.recordContribution(contributionAmount, employerMatchAmount, contributeToAccount.getAccountType());
+      rule.recordContribution(
+        contributionAmount,
+        employerMatchAmount,
+        contributeToAccount.getAccountType(),
+        matchDestinationAccount.getAccountType()
+      );
 
       remainingToContribute -= contributionAmount;
       currentRuleIndex++;

@@ -124,19 +124,25 @@ export class ContributionRule {
       this.calculateIncomeLimit(incomesData)
     );
 
-    const desiredContribution = this.calculateDesiredContribution(remainingToContribute);
+    const desiredContribution = this.calculateDesiredContribution(remainingToContribute, incomesData);
 
     const contributionAmount = Math.min(desiredContribution, maxContribution);
-    const employerMatchAmount = this.calculateEmployerMatch(contributionAmount);
+    const employerMatchAmount = this.calculateEmployerMatch(contributionAmount, incomesData, desiredContribution);
 
     return { contributionAmount, employerMatchAmount };
   }
 
   /** Records a committed contribution against per-rule YTD counters and the shared tracker */
-  recordContribution(employee: number, employer: number, accountType: AccountInputs['type']): void {
+  recordContribution(
+    employee: number,
+    employer: number,
+    employeeAccountType: AccountInputs['type'],
+    employerAccountType: AccountInputs['type']
+  ): void {
     this.ytdEmployeeContribution += employee;
     this.ytdEmployerMatch += employer;
-    this.tracker.recordContribution(accountType, employee, employer, this.contributionInput.incomeId);
+    this.tracker.recordContribution(employeeAccountType, employee, 0, this.contributionInput.incomeId);
+    this.tracker.recordContribution(employerAccountType, 0, employer, undefined);
   }
 
   resetYTD(): void {
@@ -146,6 +152,10 @@ export class ContributionRule {
 
   getAccountID(): string {
     return this.contributionInput.accountId;
+  }
+
+  getEmployerMatchAccountID(): string | undefined {
+    return this.contributionInput.employerMatchAccountId;
   }
 
   getRank(): number {
@@ -158,7 +168,19 @@ export class ContributionRule {
     return Math.max(0, (incomesData?.perIncomeData?.[incomeId]?.income ?? 0) - this.tracker.getEmployeeByIncome(incomeId));
   }
 
-  private calculateEmployerMatch(contributionAmount: number): number {
+  private calculateEmployerMatch(contributionAmount: number, incomesData: IncomesData | null, desiredEmployeeContribution: number): number {
+    if (this.contributionInput.contributionType === 'percentOfIncome' && this.contributionInput.employerMatchPercent) {
+      const contributionRatio = desiredEmployeeContribution > 0 ? contributionAmount / desiredEmployeeContribution : 0;
+
+      const incomeBase = this.contributionInput.incomeId
+        ? (incomesData?.perIncomeData?.[this.contributionInput.incomeId]?.income ?? 0)
+        : (incomesData?.totalIncome ?? 0);
+
+      const maxMonthlyMatch = incomeBase * (this.contributionInput.employerMatchPercent / 100);
+
+      return maxMonthlyMatch * contributionRatio;
+    }
+
     if (!this.contributionInput.employerMatch) return 0;
 
     const remainingToMaxEmployerMatch = Math.max(0, this.contributionInput.employerMatch - this.ytdEmployerMatch);
@@ -166,12 +188,18 @@ export class ContributionRule {
     return Math.min(contributionAmount, remainingToMaxEmployerMatch);
   }
 
-  private calculateDesiredContribution(remainingToContribute: number): number {
+  private calculateDesiredContribution(remainingToContribute: number, incomesData: IncomesData | null): number {
     switch (this.contributionInput.contributionType) {
       case 'dollarAmount':
         return Math.max(0, this.contributionInput.dollarAmount - this.ytdEmployeeContribution);
       case 'percentRemaining':
         return remainingToContribute * (this.contributionInput.percentRemaining / 100);
+      case 'percentOfIncome': {
+        const incomeBase = this.contributionInput.incomeId
+          ? (incomesData?.perIncomeData?.[this.contributionInput.incomeId]?.income ?? 0)
+          : (incomesData?.totalIncome ?? 0);
+        return incomeBase * (this.contributionInput.percentOfIncome / 100);
+      }
       case 'unlimited':
         return Infinity;
     }

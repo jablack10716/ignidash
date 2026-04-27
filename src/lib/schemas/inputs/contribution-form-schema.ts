@@ -25,6 +25,7 @@ const sharedContributionSchema = z.object({
   incomeId: z.string().optional(),
   disabled: z.boolean().optional(),
   employerMatch: optionalCurrencyFieldForbidsZero('Employer match must be greater than zero'),
+  employerMatchAccountId: z.string().optional(),
   enableMegaBackdoorRoth: z.boolean().optional(),
 });
 
@@ -40,6 +41,13 @@ export const contributionFormSchema = z
       ...sharedContributionSchema.shape,
       contributionType: z.literal('percentRemaining'),
       percentRemaining: percentageField(0, 100, 'Percentage of remaining funds'),
+    }),
+
+    z.object({
+      ...sharedContributionSchema.shape,
+      contributionType: z.literal('percentOfIncome'),
+      percentOfIncome: percentageField(0, 100, 'Percentage of income'),
+      employerMatchPercent: percentageField(0, 100, 'Employer match percentage').optional(),
     }),
 
     z.object({

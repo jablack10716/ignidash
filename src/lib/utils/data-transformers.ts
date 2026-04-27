@@ -68,6 +68,7 @@ export function contributionFromConvex(contribution: Doc<'plans'>['contributionR
     incomeId: contribution.incomeId,
     disabled: contribution.disabled ?? false,
     employerMatch: contribution.employerMatch,
+    employerMatchAccountId: contribution.employerMatchAccountId,
     enableMegaBackdoorRoth: contribution.enableMegaBackdoorRoth,
   };
 
@@ -76,6 +77,13 @@ export function contributionFromConvex(contribution: Doc<'plans'>['contributionR
       return { ...base, contributionType: 'dollarAmount', dollarAmount: contribution.amount.dollarAmount };
     case 'percentRemaining':
       return { ...base, contributionType: 'percentRemaining', percentRemaining: contribution.amount.percentRemaining };
+    case 'percentOfIncome':
+      return {
+        ...base,
+        contributionType: 'percentOfIncome',
+        percentOfIncome: contribution.amount.percentOfIncome,
+        employerMatchPercent: contribution.amount.employerMatchPercent,
+      };
     case 'unlimited':
       return { ...base, contributionType: 'unlimited' };
   }
@@ -243,6 +251,7 @@ export function contributionToConvex(contribution: ContributionInputs): Doc<'pla
     maxBalance: contribution.maxBalance,
     incomeId: contribution.incomeId,
     employerMatch: contribution.employerMatch,
+    employerMatchAccountId: contribution.employerMatchAccountId,
     enableMegaBackdoorRoth: contribution.enableMegaBackdoorRoth,
   };
 
@@ -251,6 +260,15 @@ export function contributionToConvex(contribution: ContributionInputs): Doc<'pla
       return { ...base, amount: { type: 'dollarAmount', dollarAmount: contribution.dollarAmount } };
     case 'percentRemaining':
       return { ...base, amount: { type: 'percentRemaining', percentRemaining: contribution.percentRemaining } };
+    case 'percentOfIncome':
+      return {
+        ...base,
+        amount: {
+          type: 'percentOfIncome',
+          percentOfIncome: contribution.percentOfIncome,
+          employerMatchPercent: contribution.employerMatchPercent,
+        },
+      };
     case 'unlimited':
       return { ...base, amount: { type: 'unlimited' } };
   }
